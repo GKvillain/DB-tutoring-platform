@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
   BookOpen,
@@ -17,6 +17,32 @@ import "./Navigation.css";
 
 export default function Navigation() {
   const [expanded, setExpanded] = useState(false);
+  const accountId = localStorage.getItem("account_id");
+  const [tutorName, setTutorName] = useState("");
+
+  useEffect(() => {
+    async function fetchName() {
+      if (!accountId) return;
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/getTutorName?account_id=${accountId}`,
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch tutor name");
+        }
+
+        const data = await res.json();
+        setTutorName(data.tutor_name);
+      } catch (err) {
+        console.error(err);
+        setTutorName("ไม่พบชื่อผู้ใช้");
+      }
+    }
+
+    fetchName();
+  }, [accountId]);
 
   return (
     <div
@@ -100,7 +126,7 @@ export default function Navigation() {
           <User size={22} />
           {expanded && (
             <div className="user-info">
-              <span className="user-name">คุณครู</span>
+              <span className="user-name">{tutorName || "กำลังโหลด..."}</span>
               <span className="user-role">ผู้ดูแลระบบ</span>
             </div>
           )}

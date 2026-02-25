@@ -10,6 +10,22 @@ export function StatTutor() {
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(false);
   const [statisticsCourse, setStatisticsCourse] = useState([]);
+  const accountId = localStorage.getItem("account_id");
+
+  // Add this before your fetch calls to verify the endpoint exists
+  async function testAPI() {
+    try {
+      const test = await fetch("http://localhost:3000/api/test");
+      const text = await test.text();
+      console.log("Test response:", text.substring(0, 200));
+    } catch (err) {
+      console.error("Test failed:", err);
+    }
+  }
+
+  useEffect(() => {
+    testAPI();
+  }, []);
 
   useEffect(() => {
     async function fetchStatistics() {
@@ -18,29 +34,57 @@ export function StatTutor() {
       setLoading(true);
 
       try {
+        const get_prepare = await fetch(
+          `http://localhost:3000/api/getTutorId?account_id=${accountId}`,
+        );
+
+        if (!get_prepare.ok) {
+          const errorData = await get_prepare.json();
+          throw new Error(errorData.error || "Failed to fetch tutor ID");
+        }
+
+        const tutorData = await get_prepare.json();
+        const tutor_id = tutorData.tutor_id;
+
         const yearParam =
           selectedYear === "all"
             ? "all"
             : (parseInt(selectedYear) - 543).toString();
 
         const res = await fetch(
-          `http://localhost:3000/api/dashboard?month=${selectedMonth}&year=${yearParam}`,
+          `http://localhost:3000/api/dashboard?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
         );
 
         if (!res.ok) {
           const errorData = await res.json();
-          throw new Error(errorData.error || "Failed to fetch");
+          throw new Error(errorData.error || "Failed to fetch dashboard");
         }
 
         const data = await res.json();
-
         setStatistics(data);
 
-        // Transform the data for course statistics if needed
-        // For now, set an empty array since the API doesn't return course-specific data yet
-        setStatisticsCourse([]);
+        // Fetch course summary data
+        const res2 = await fetch(
+          `http://localhost:3000/api/getCourseSummary?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
+        );
+
+        if (!res2.ok) {
+          const errorData = await res2.json();
+          throw new Error(errorData.error || "Failed to fetch course summary");
+        }
+
+        const data2 = await res2.json();
+
+        if (Array.isArray(data2)) {
+          setStatisticsCourse(data2);
+        } else if (data2 && typeof data2 === "object") {
+          setStatisticsCourse(data2.courses || []);
+        } else {
+          setStatisticsCourse([]);
+        }
 
         console.log("Dashboard data:", data);
+        console.log("Course summary data:", data2);
       } catch (err) {
         console.error("Error fetching statistics:", err);
       } finally {
@@ -49,7 +93,7 @@ export function StatTutor() {
     }
 
     fetchStatistics();
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, accountId]);
 
   const clearFilters = () => {
     setSelectedMonth("");
@@ -64,7 +108,6 @@ export function StatTutor() {
       <article className="container">
         <h1 className="topic">รายงานสถิติการสอน</h1>
 
-        {/* SELECT FILTER */}
         <div className="d-flex align-items-center gap-3 mb-4">
           <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#495057" }}>
             รายงานสถิติการสอนทั้งหมด
@@ -139,7 +182,6 @@ export function StatTutor() {
               <div className="block-stat">
                 <h4>จำนวนคลาสที่สอน</h4>
                 <p>{statistics?.total_sessions || 0} คลาส</p>{" "}
-                {/* Changed from total_classes to total_sessions */}
               </div>
 
               <div className="block-stat">

@@ -98,66 +98,54 @@ app.get("/api/statisticsCourse", async (req, res) => {
 
 app.get("/api/dashboard", async (req, res) => {
   try {
-    const { month, year } = req.query;
+    const { month, year, tutor_id } = req.query;
 
-    // Validate month and year
-    if (!month || !year) {
-      return res.status(400).json({ error: "Month and year are required" });
+    if (!month || !year || !tutor_id) {
+      return res.status(400).json({
+        error: "Month, year, and tutor_id are required",
+      });
     }
 
-    // Call all four RPC functions in parallel
-    const [incomeRes, sessionsRes, hoursRes, studentsRes] = await Promise.all([
-      supabase.rpc("get_total_income", {
-        p_month: parseInt(month),
-        p_year: parseInt(year),
-      }),
-      supabase.rpc("get_total_sessions", {
-        p_month: parseInt(month),
-        p_year: parseInt(year),
-      }),
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+
+    // Call RPC functions with updated parameter names
+    const [hoursRes, studentsRes, sessionsRes, incomeRes] = await Promise.all([
       supabase.rpc("get_total_hours_month_year", {
-        p_month: parseInt(month),
-        p_year: parseInt(year),
+        p_month: monthNum,
+        p_year: yearNum,
+        p_tutor_id: tutor_id, // Changed from current_tutor_id
       }),
       supabase.rpc("get_student_count", {
-        p_month: parseInt(month),
-        p_year: parseInt(year),
+        p_month: monthNum,
+        p_year: yearNum,
+        p_tutor_id: tutor_id, // Changed from current_tutor_id
+      }),
+      supabase.rpc("get_total_sessions", {
+        p_month: monthNum,
+        p_year: yearNum,
+        p_tutor_id: tutor_id, // Changed from current_tutor_id
+      }),
+      supabase.rpc("get_total_income", {
+        p_month: monthNum,
+        p_year: yearNum,
+        p_tutor_id: tutor_id, // Changed from current_tutor_id
       }),
     ]);
 
     // Check for errors
-    if (incomeRes.error) {
-      console.error("Income RPC error:", incomeRes.error);
-      throw incomeRes.error;
-    }
-    if (sessionsRes.error) {
-      console.error("Sessions RPC error:", sessionsRes.error);
-      throw sessionsRes.error;
-    }
-    if (hoursRes.error) {
-      console.error("Hours RPC error:", hoursRes.error);
-      throw hoursRes.error;
-    }
-    if (studentsRes.error) {
-      console.error("Students RPC error:", studentsRes.error);
-      throw studentsRes.error;
-    }
+    if (hoursRes.error) throw hoursRes.error;
+    if (studentsRes.error) throw studentsRes.error;
+    if (sessionsRes.error) throw sessionsRes.error;
+    if (incomeRes.error) throw incomeRes.error;
 
-    // Log for debugging (remove in production)
-    // console.log("Dashboard data for:", { month, year });
-    // console.log("Income:", incomeRes.data);
-    // console.log("Sessions:", sessionsRes.data);
-    // console.log("Hours:", hoursRes.data);
-    // console.log("Students:", studentsRes.data);
-
-    // Send response with all four metrics
     res.json({
-      total_income: incomeRes.data || 0,
-      total_sessions: sessionsRes.data || 0,
       total_hours: hoursRes.data || 0,
       total_students: studentsRes.data || 0,
-      month: month,
-      year: year,
+      total_sessions: sessionsRes.data || 0,
+      total_income: incomeRes.data || 0,
+      month: monthNum,
+      year: yearNum,
     });
   } catch (err) {
     console.error("Dashboard API error:", err);
@@ -168,6 +156,113 @@ app.get("/api/dashboard", async (req, res) => {
   }
 });
 
+app.get("/api/getCourseSummary", async (req, res) => {
+  const { month, year, tutor_id } = req.query;
+
+  const { data, error } = await supabase.rpc("get_course_monthly_summary", {
+    p_month: month,
+    p_year: year,
+    current_tutor_id: tutor_id,
+  });
+
+  if (error) throw error;
+
+  res.json(data);
+});
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const { data, error } = await supabase
+      .from("account")
+      .select("account_id, fname, lname, account_role, password")
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    if (data.password !== password) {
+      return res.status(401).json({ error: "Wrong password" });
+    }
+
+    res.json({
+      success: true,
+      account_id: data.account_id,
+      role: data.account_role,
+      fname: data.fname,
+      lname: data.lname,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get tutor ID from account ID
+// Backend: /api/getTutorId
+app.get("/api/getTutorId", async (req, res) => {
+  try {
+    const { account_id } = req.query;
+
+    if (!account_id) {
+      return res.status(400).json({ error: "account_id is required" });
+    }
+
+    const { data, error } = await supabase
+      .from("tutor")
+      .select("tutor_id")
+      .eq("account_id", account_id)
+      .single();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: "Tutor not found" });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/getTutorName", async (req, res) => {
+  try {
+    const { account_id } = req.query;
+
+    if (!account_id) {
+      return res.status(400).json({ error: "account_id is required" });
+    }
+
+    const { data, error } = await supabase
+      .from("account")
+      .select("fname, lname")
+      .eq("account_id", account_id)
+      .maybeSingle();
+
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: "Account not found" });
+    }
+
+    res.json({
+      tutor_name: `${data.fname} ${data.lname}`,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { StatTutor } from "./pages/StatTutor";
 import { PaymentTutor } from "./pages/PaymentTutor";
 import { Summary } from "./pages/Summary";
+import { Login } from "./pages/LoingDummy";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Route path="teaching/statistics" element={<StatTutor />} />
       <Route path="payment/statuspayment" element={<PaymentTutor />} />
       <Route path="student/summary" element={<Summary />} />
+      <Route path="LoginPage" element={<Login />} />
     </Routes>
   );
 }
