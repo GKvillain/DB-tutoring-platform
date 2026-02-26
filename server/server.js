@@ -263,6 +263,136 @@ app.get("/api/getTutorName", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+///////////////////////////////////////////////////////////////////////////////////////////
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const { data, error } = await supabase
+      .from("account")
+      .select("account_id, fname, lname, account_role, password")
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    if (data.password !== password) {
+      return res.status(401).json({ error: "Wrong password" });
+    }
+
+    res.json({
+      success: true,
+      account_id: data.account_id,
+      role: data.account_role,
+      fname: data.fname,
+      lname: data.lname,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/register", async (req, res) => {
+  try {
+    console.log("Incoming Register Data:", req.body);
+
+    const { role,fname, lname, email, password, phone, line, facebook } = req.body;
+
+    // ===============================
+    const { data: account, error: accountError } = await supabase
+      .from("account")
+      .insert([
+        {
+           account_role: role,
+          fname: fname,
+          lname: lname,
+          email: email,
+          password: password,
+          date_create: new Date(),
+        },
+      ])
+      .select()
+      .single();
+
+    if (accountError) {
+      console.error("Account Insert Error:", accountError);
+      return res.status(500).json({ error: accountError.message });
+    }
+
+    console.log("Account Inserted:", account);
+
+    const accountId = account.account_id;
+
+    // ===============================
+    const { data: channels, error: channelError } = await supabase
+      .from("contactchannel")
+      .select("*");
+
+    if (channelError) {
+      console.error("ContactChannel Fetch Error:", channelError);
+      return res.status(500).json({ error: channelError.message });
+    }
+
+    console.log("Contact Channels:", channels);
+
+    const contactsToInsert = [];
+
+    channels.forEach((ch) => {
+      if (ch.application_name === "Phone" && phone) {
+        contactsToInsert.push({
+          account_id: accountId,
+          chanel_id: ch.contact_channel_id,
+          contact_value: phone,
+        });
+      }
+
+      if (ch.application_name === "LINE" && line) {
+        contactsToInsert.push({
+          account_id: accountId,
+          chanel_id: ch.contact_channel_id,
+          contact_value: line,
+        });
+      }
+
+      if (ch.application_name === "Facebook" && facebook) {
+        contactsToInsert.push({
+          account_id: accountId,
+          chanel_id: ch.contact_channel_id,
+          contact_value: facebook,
+        });
+      } 
+    });
+
+    // ===============================
+    if (contactsToInsert.length > 0) {
+      const { error: contactError } = await supabase
+        .from("accountcontact")
+        .insert(contactsToInsert);
+
+      if (contactError) {
+        console.error("AccountContact Insert Error:", contactError);
+        return res.status(500).json({ error: contactError.message });
+      }
+
+      console.log("Contacts Inserted:", contactsToInsert);
+    } else {
+      console.log(" No contacts to insert");
+    }
+
+    // ===============================
+    res.status(201).json({
+      success: true,
+      message: "Register successful",
+      account_id: accountId,
+    });
+  } catch (err) {
+    console.error("Server Error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
