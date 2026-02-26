@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./LoginDummy.css"; // Create this CSS file
 
 export function Login() {
   const navigate = useNavigate();
@@ -8,6 +9,8 @@ export function Login() {
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -18,6 +21,7 @@ export function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:3000/api/login", {
@@ -32,6 +36,7 @@ export function Login() {
 
       if (!res.ok) {
         alert(data.error || "Login failed");
+        setLoading(false);
         return;
       }
 
@@ -46,40 +51,61 @@ export function Login() {
         navigate("/teaching/statistics");
       } else {
         alert("Role ไม่ถูกต้อง");
+        setLoading(false);
       }
-
     } catch (err) {
       console.error(err);
       alert("เกิดข้อผิดพลาด");
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Login</h2>
-
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email</label><br />
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
+    <div className="login-container">
+      <div className="login-card">
+        <div className="login-header">
+          <h2>ยินดีต้อนรับ</h2>
+          <p>กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
         </div>
 
-        <div>
-          <label>Password</label><br />
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-          />
-        </div>
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="form-group">
+            <label>อีเมล</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="example@email.com"
+              required
+              className="form-input"
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          <div className="form-group">
+            <label>รหัสผ่าน</label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="··········"
+              required
+              className="form-input"
+            />
+          </div>
+
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+          </button>
+        </form>
+
+        <div className="login-footer">
+          <p>
+            ยังไม่มีบัญชีผู้ใช้? <a href="/register">สมัครสมาชิก</a>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

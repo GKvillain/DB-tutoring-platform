@@ -298,14 +298,15 @@ app.post("/api/register", async (req, res) => {
   try {
     console.log("Incoming Register Data:", req.body);
 
-    const { role,fname, lname, email, password, phone, line, facebook } = req.body;
+    const { role, fname, lname, email, password, phone, line, facebook } =
+      req.body;
 
     // ===============================
     const { data: account, error: accountError } = await supabase
       .from("account")
       .insert([
         {
-           account_role: role,
+          account_role: role,
           fname: fname,
           lname: lname,
           email: email,
@@ -362,7 +363,7 @@ app.post("/api/register", async (req, res) => {
           chanel_id: ch.contact_channel_id,
           contact_value: facebook,
         });
-      } 
+      }
     });
 
     // ===============================
@@ -391,6 +392,20 @@ app.post("/api/register", async (req, res) => {
     console.error("Server Error:", err);
     res.status(500).json({ error: err.message });
   }
+});
+
+app.get("/api/paymentStatus", async (req, res) => {
+  const { month, year, current_tutor_id } = req.query;
+
+  const { data, error } = await supabase.rpc("get_summary_payment", {
+    p_month: month,
+    p_year: year,
+    current_tutor_id: current_tutor_id,
+  });
+
+  if (error) throw error;
+
+  res.json(data);
 });
 
 const PORT = process.env.PORT || 3000;
