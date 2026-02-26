@@ -394,19 +394,40 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.get("/api/paymentStatus", async (req, res) => {
-  const { month, year, current_tutor_id } = req.query;
+// app.get("/api/paymentStatus", async (req, res) => {
+//   try {
+//     const { month, year, current_tutor_id } = req.query;
 
-  const { data, error } = await supabase.rpc("get_summary_payment", {
-    p_month: month,
-    p_year: year,
-    current_tutor_id: current_tutor_id,
-  });
+//     console.log("Params:", req.query);
+//     console.log("Month:", month, "Year:", year, "Tutor ID:", current_tutor_id);
 
-  if (error) throw error;
+//     // Call the Supabase function (RPC)
+//     const { data, error } = await supabase.rpc("get_summary_payment", {
+//       p_month: month,
+//       p_year: year,
+//       current_tutor_id: current_tutor_id,
+//     });
 
-  res.json(data);
-});
+//     if (error) {
+//       console.error("Supabase error:", error);
+//       throw error;
+//     }
+
+//     console.log("Query result:", data);
+//     console.log("Row count:", data?.length || 0);
+
+//     res.json(data || []);
+//   } catch (error) {
+//     console.error("Error details:", error);
+//     console.error("Error message:", error.message);
+//     console.error("Error stack:", error.stack);
+
+//     res.status(500).json({
+//       error: "Internal server error",
+//       message: error.message,
+//     });
+//   }
+// });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

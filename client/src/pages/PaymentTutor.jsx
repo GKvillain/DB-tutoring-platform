@@ -8,10 +8,11 @@ import { useDateInfo } from "../hooks/useDateInfo";
 export function PaymentTutor() {
   const [expandedId, setExpandedId] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false); // Add this line
+  // const [isLoading, setIsLoading] = useState(false);
   // const [error, setError] = useState(null);
   const { todayFormatted, month, year, isLastDay } = useDateInfo();
   const accountId = localStorage.getItem("account_id");
+
   const toggleCard = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -21,9 +22,6 @@ export function PaymentTutor() {
   useEffect(() => {
     async function fetchPaymentSum() {
       if (!accountId || !month || !year) return;
-
-      // setIsLoading(true);
-      // setError(null);
 
       try {
         console.log("Fetching with params:", {
@@ -42,12 +40,11 @@ export function PaymentTutor() {
         const tutorData = await tutorResponse.json();
         console.log("Tutor data:", tutorData);
 
-        // Make sure you're getting the correct tutor_id from the response
         const tutor_id = tutorData.tutor_id || tutorData;
 
-        // Now fetch payment summary with correct parameters
+        // Now fetch payment summary
         const paymentResponse = await fetch(
-          `http://localhost:3000/api/paymentStatus?month=${8}&year=${2025}&current_tutor_id=${tutor_id}`,
+          `http://localhost:3000/api/paymentStatus?month=${12}&year=${2025}&current_tutor_id=${tutor_id}`,
         );
 
         if (!paymentResponse.ok) {
@@ -63,14 +60,40 @@ export function PaymentTutor() {
         setPaymentStatus(sumPayment);
       } catch (error) {
         console.error("Error fetching payment summary:", error);
-        //   setError(error.message);
-        // } finally {
-        //   setIsLoading(false);
-        // }
       }
     }
     fetchPaymentSum();
   }, [month, christianYear, accountId, year]);
+
+  // useEffect(() => {
+  //   async function fetchPaymentSum() {
+  //     if (!accountId || !month || !year) return;
+
+  //     try {
+  //       console.log("Using mockup data");
+
+  //       // Get tutor ID first (you might still need this for real data)
+  //       const tutorResponse = await fetch(
+  //         `http://localhost:3000/api/getTutorId?account_id=${accountId}`,
+  //       );
+
+  //       if (!tutorResponse.ok) throw new Error("Failed to fetch tutor ID");
+
+  //       const tutorData = await tutorResponse.json();
+  //       console.log("Tutor data:", tutorData);
+
+  //       // const tutor_id = tutorData.tutor_id || tutorData;
+
+  //       // Use mockup data instead of actual API call
+  //       setPaymentStatus(mockPaymentData);
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //       // Fallback to mockup data even if tutor ID fetch fails
+  //       setPaymentStatus(mockPaymentData);
+  //     }
+  //   }
+  //   fetchPaymentSum();
+  // }, [month, christianYear, accountId, year, , mockPaymentData]);
 
   return (
     <>
@@ -90,7 +113,6 @@ export function PaymentTutor() {
           />
         </div>
 
-        {/* Header Section */}
         <div className="payment-header">
           <div className="header-image-space"></div>
           <div className="header-name-space"></div>
@@ -102,64 +124,70 @@ export function PaymentTutor() {
           </div>
         </div>
 
-        <div
-          className={`student-card ${expandedId === 1 ? "active" : ""}`}
-          onClick={() => toggleCard(1)}
-        >
-          {paymentStatus.map((stat, index) => (
-            <div
-              className="student-card-content"
-              key={stat.student_name || index}
-            >
-              <img src={nonggk} alt="น้องมิคาสะ" className="student-image" />
+        {paymentStatus.map((stat, index) => (
+          <div
+            key={`${stat.student_name}-${index}`}
+            className={`student-card ${expandedId === index ? "active" : ""}`}
+            onClick={() => toggleCard(index)}
+          >
+            <div className="student-card-content">
+              <img
+                src={nonggk}
+                alt={stat.student_name}
+                className="student-image"
+              />
               <div className="student-name-container">
                 <p className="student-name">{stat.student_name}</p>
+                <select onClick={(e) => e.stopPropagation()}>
+                  {paymentStatus.map((stat2, index) => {
+                    <>
+                      <select>stat2.course_name</select>
+                    </>;
+                  })}
+                  <option></option>
+                </select>
               </div>
 
-              <div className="student-details" key={stat.total_price || index}>
-                <span className="hours-remaining">{stat.session_hours}</span>
+              <div className="student-details">
+                <span className="hours-remaining">
+                  {stat.total_pending_hours}
+                </span>
                 <span className="hourly-rate">{stat.price}</span>
-                <span className="total-amount">{stat.total_price}</span>
+                <span className="total-amount">{stat.total_outstanding}</span>
                 <span className="total-status">{stat.payment_status}</span>
               </div>
             </div>
-          ))}
 
-          {expandedId === 1 && (
-            <div className="expanded-detail">
-              <p>คณิตศาสตร์</p>
-              <div className="payment-details">
-                <div className="topic-inner-detail">
-                  <h4>ครั้งที่</h4>
-                  <h4>เดือน</h4>
-                  <h4>คาบเรียน (ชั่วโมง)</h4>
-                  <h4>ราคาต่อชั่วโมง (บาท)</h4>
-                  <h4>ยอดชำระ (บาท)</h4>
-                  <h4>วันที่คำนวณยอดชำระ</h4>
-                  <h4>วันที่ชำระเงิน</h4>
-                  <h4>สถานะการชำระเงิน</h4>
-                </div>
+            {expandedId === index && (
+              <div className="expanded-detail">
+                <p>รายละเอียดคาบเรียน</p>
+                <div className="payment-details">
+                  <div className="topic-inner-detail">
+                    <h4>ครั้งที่</h4>
+                    <h4>เดือน</h4>
+                    <h4>คาบเรียน (ชั่วโมง)</h4>
+                    <h4>ราคาต่อชั่วโมง (บาท)</h4>
+                    <h4>ยอดชำระ (บาท)</h4>
+                    <h4>วันที่คำนวณยอดชำระ</h4>
+                    <h4>วันที่ชำระเงิน</h4>
+                    <h4>สถานะการชำระเงิน</h4>
+                  </div>
 
-                <div className="topic-inner-detail">
-                  <p>1</p>
-                  <p>มกราคม 2568</p>
-                  <p>7</p>
-                  <p>200</p>
-                  <p>1400</p>
-                  <p>
-                    {(isLastDay && (
-                      <>
-                        <p>{todayFormatted}</p>
-                      </>
-                    )) || <p>-</p>}
-                  </p>
-                  <p>31/01/2568</p>
-                  <p>ชำระเงินแล้ว</p>
+                  <div className="topic-inner-detail">
+                    <p>{index + 1}</p>
+                    <p>สิงหาคม 2568</p>
+                    <p>{stat.session_hours}</p>
+                    <p>{stat.price}</p>
+                    <p>{stat.total_price}</p>
+                    <p>{isLastDay ? todayFormatted : "-"}</p>
+                    <p>-</p>
+                    <p>{stat.payment_status}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
     </>
   );
