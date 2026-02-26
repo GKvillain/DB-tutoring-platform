@@ -1,0 +1,271 @@
+/* PaymentTutor.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f1f0ff;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    sans-serif;
+}
+
+.payment-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Search Section */
+.search-section {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem 1.5rem;
+  border: 2px solid #ebc7e6;
+  border-radius: 50px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(160, 132, 220, 0.1);
+}
+
+.search-input:focus {
+  border-color: #a084dc;
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.2);
+}
+
+.search-input::placeholder {
+  color: #a084dc;
+  opacity: 0.7;
+}
+
+/* Titles */
+.payment-title {
+  text-align: center;
+  color: #a084dc;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(160, 132, 220, 0.1);
+}
+
+.payment-date {
+  text-align: center;
+  color: #a084dc;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+/* Filter Section */
+.filter-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.status-filter {
+  padding: 0.8rem 2rem;
+  border: 2px solid #ebc7e6;
+  border-radius: 25px;
+  background-color: white;
+  color: #a084dc;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.status-filter:hover {
+  border-color: #a084dc;
+  background-color: #f1f0ff;
+}
+
+/* Payment Header */
+.payment-header {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #a084dc 0%, #ebc7e6 100%);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.3);
+}
+
+.header-item {
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Student Card */
+.student-card {
+  background-color: white;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 20px rgba(160, 132, 220, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  transition: all 0.3s ease;
+}
+
+.student-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(160, 132, 220, 0.25);
+}
+
+.student-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #a084dc;
+  box-shadow: 0 4px 10px rgba(160, 132, 220, 0.3);
+}
+
+.student-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.student-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #a084dc;
+}
+
+.student-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.hours-remaining,
+.hourly-rate,
+.total-amount {
+  color: #666;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.payment-status-select {
+  padding: 0.6rem 1rem;
+  border: 2px solid #ebc7e6;
+  border-radius: 25px;
+  background-color: white;
+  color: #a084dc;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 150px;
+  justify-self: center;
+}
+
+.payment-status-select:hover {
+  border-color: #a084dc;
+  background-color: #f1f0ff;
+}
+
+.payment-status-select option {
+  color: #a084dc;
+}
+
+/* Status-specific styles (can be applied dynamically with JS) */
+.status-paid {
+  background-color: #a084dc;
+  color: white;
+}
+
+.status-pending {
+  background-color: #ebc7e6;
+  color: #a084dc;
+}
+
+.status-overdue {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .payment-container {
+    padding: 1.5rem;
+  }
+
+  .student-details {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-title {
+    font-size: 2rem;
+  }
+
+  .payment-header {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .header-item {
+    text-align: left;
+    padding-left: 1rem;
+  }
+
+  .student-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .student-info {
+    width: 100%;
+  }
+
+  .student-details {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .payment-status-select {
+    max-width: 100%;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 1rem;
+  }
+
+  .payment-title {
+    font-size: 1.5rem;
+  }
+
+  .status-filter {
+    width: 100%;
+  }
+}

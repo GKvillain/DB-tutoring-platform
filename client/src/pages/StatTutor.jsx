@@ -78,7 +78,7 @@ export function StatTutor() {
         if (Array.isArray(data2)) {
           setStatisticsCourse(data2);
         } else if (data2 && typeof data2 === "object") {
-          setStatisticsCourse(data2.courses || []);
+          setStatisticsCourse(data2.courses_name || []);
         } else {
           setStatisticsCourse([]);
         }
@@ -210,10 +210,10 @@ export function StatTutor() {
                 statisticsCourse.length > 0 ? (
                   statisticsCourse.map((stat, index) => (
                     <div
-                      key={stat.course_name_thai || index}
+                      key={stat.course_name || index}
                       className="box-course-inner"
                     >
-                      <h5>{stat.course_name_thai || "ไม่ระบุชื่อคอร์ส"}</h5>
+                      <h5>{stat.course_name || "ไม่ระบุชื่อคอร์ส"}</h5>
                       <div className="box-course-inner-divide">
                         <p>{stat.total_hours?.toFixed(2) || 0}</p>
                         <p>{stat.total_students || 0}</p>
