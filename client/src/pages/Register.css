@@ -1,0 +1,289 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.all {
+    /* background-image: url(../img/login-pic.avif);
+    background-repeat: no-repeat;
+    background-size: cover; */
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.left {
+    background-image:url(https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/login-pic.avif);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 50%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-right-radius: 60px;
+    border-bottom-right-radius: 60px;
+
+}
+
+.left h1 {
+    color: #f0f8ff;
+    font-size: 8rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 40px #00000059;
+    border: 1px solid #ffffff40;
+    color: #fff;
+    padding: 2rem;
+
+}
+
+.right {
+    background-color: #f1f0ff;
+    width: 50%;
+    height: 100vh;
+    /* background-color: rgb(255, 255, 255); */
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+
+}
+
+#logo-login {
+    display: block;
+    margin: 0rem auto 0rem auto;
+    width: 40%;
+}
+
+.form-section {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.choose {
+    width: 500px;
+    display: flex;
+    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+}
+
+.choose h3 {
+    cursor: pointer;
+    margin: auto;
+    padding: 2rem;
+  
+}
+
+.choose h3 a {
+    text-decoration: none;
+    color: #353535;
+    
+}
+
+.choose-left,
+.choose-right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#active {
+    color: #353535;
+    box-shadow: inset 0 3px 6px #0000004d;
+    background-color: #EBC7E6;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 70px;
+}
+
+#unactive {
+    box-shadow: inset 0 3px 6px #0000004d;
+    border-radius: 70px;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+#unactive:hover {
+    box-shadow: inset 0 3px 6px #0000004d;
+    background-color: #8b8b8b;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 70px;
+    transition: 0.2s;
+}
+.active-role {
+  opacity: 1;
+
+  border-radius: 12px;
+  background-color: #A084DC;
+  box-shadow: 0 0 15px #A084DC;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.choice-pic {
+    display: flex;
+    justify-content: space-around;
+}
+
+.choose-role {
+    padding: 0.5rem;
+    border-radius: 10px;
+    width: 17%;
+}
+
+.choose-role:hover {
+    background-color: rgb(177, 177, 177);
+    transition: 0.2s;
+}
+
+.choose-role:active {
+    background-color: rgb(68, 68, 68);
+}
+
+.choose-role.selected {
+    background-color: #49ff74;
+    color: white;
+    border: 0.2rem #09a009 solid;
+}
+
+.form-name {
+    display: flex;
+    margin: 2rem 0 2rem 0;
+    gap: 1rem;
+    margin: 0;
+    width: 100%;
+}
+.firstname,
+.lastname {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form label {
+    color: #444;
+}
+
+.form input {
+    padding: 0.4rem 1rem;
+    border-radius: 18px;
+    border: none;
+    background: #e2e2e2;
+    outline: none;
+    margin: 0;
+    box-shadow: inset 2px 2px 2px #00000040;
+}
+
+.password-box,
+.email-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+#eye {
+    position: absolute;
+    right: 5%;
+    top: 45%;
+    cursor: pointer;
+    color: #555;
+}
+
+.lower {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.regist-btn {
+    width: 50%;
+    margin-top: 1rem;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 20px;
+    background: #ddd;
+    cursor: pointer;
+}
+
+.regist-btn:hover {
+    background-color: #A084DC;
+    color: #ffffff;
+    transition: 0.2s;
+}
+
+
+.contact-box {
+    display: flex;
+
+}
+
+.contact-box label {
+    padding-left: 1rem;
+}
+
+.contact-left {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+.contact-left label{
+    margin-top: 0.8rem;
+}
+
+.contact-right {
+    width: 50%;
+}
+
+.contact-text {
+    margin: 0;
+}
+
+.contact-phone,
+.contact-line,
+.contact-facebook {
+    margin: 0.9rem;
+}
+
+.contact-right input {
+    margin: 0.2rem;
+ 
+}
+
+.choice-role-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: -0.5rem;
+
+}
+
+.role-text-parent,
+.role-text-tutor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0rem 6rem;
+    /* transition: 0.25s ease; */
+}
+
+.form-name span,
+.password-box span,
+.email-box span {
+    color: red;
+}
