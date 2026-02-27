@@ -311,6 +311,9 @@ app.post("/api/register", async (req, res) => {
           lname: lname,
           email: email,
           password: password,
+          tel: phone,
+          line_id:line,
+          fb_name:facebook,
           date_create: new Date(),
         },
       ])
