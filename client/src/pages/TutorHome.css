@@ -1,0 +1,128 @@
+.search-bar {
+    width: 100%;
+    max-width: 450px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 2rem;
+    padding: 10px 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px black solid;
+}
+
+.search-bar i {
+    font-size: 1.2rem;
+    color: #888;
+    margin-right: 10px;
+
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.date {
+    margin: 3rem;
+    width: 90%;
+    margin-left: auto;
+}
+
+.class {
+    margin-top: 1rem;
+}
+
+.class-nav {
+    /* background-color: blue; */
+    justify-content: space-between;
+    font-size: 1.3rem;
+    align-items: center;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+
+.class-nav p {
+    flex: 1;
+    margin: 0;
+}
+
+.class-row input {
+    width: 90%;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+}
+
+.learn-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    /* 👈 เปลี่ยนตรงนี้ */
+    height: 35px;
+    text-decoration: none;
+}
+
+.learn-btn p {
+    background-color: #6c63ff;
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    color: white;
+}
+.learn-btn p:hover{
+    color: black;
+    background-color: #EBC7E6;
+    border: 2px black solid;
+}
+
+
+.learn-btn:active {
+    transform: scale(0.95);
+}
+
+.class-row {
+    display: grid;
+    grid-template-columns: .9fr .9fr .9fr .9fr .9fr .9fr;
+    background: #e9e9e9;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 1rem;
+    align-items: center;
+    text-align: center;
+}
+
+.class-row input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+}
+
+.class-row p,
+.class-row a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.class-box {
+    /* box-shadow: inset 0 0 5px #00000033; */
+    border: 2px solid #A084DC;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.today,
+.tomorrow,
+.next {
+    margin-top: 2rem;
+}
