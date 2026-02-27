@@ -8,6 +8,7 @@ import { Summary } from "./pages/Summary";
 // import { Login } from "./pages/LoingDummy";
 import { Login } from "./pages/Login";
 import Register from "./pages/Register";
+import TutorHome from "./pages/TutorHome";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       {/* <Route path="LoginPage" element={<Login />} /> */}
       <Route path="/Login" element={<Login />} />
       <Route path="/Register" element={<Register />} />
+      <Route path="/TutorHome" element={<TutorHome />} />
     </Routes>
   );
 }
