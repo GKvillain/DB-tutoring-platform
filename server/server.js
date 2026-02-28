@@ -397,6 +397,80 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+
+app.post("/api/TutorHome", async (req, res) => {
+  try {
+    const { tutor_id } = req.body;
+    if (!tutor_id) {
+      return res.status(400).json({ error: "tutor_id is required" });
+    }
+
+    const { data, error } = await supabase
+      .from("classsession")
+      .select(
+        `
+        session_id,
+        session_date,
+        description,
+        note,
+        enrollment!inner (
+          enrollment_id,
+          student (
+            student_nickname,
+            grade_level(
+              grade_level_name
+            )
+          ),
+          enrollmentschedule (
+            start_time,
+            end_time
+          )
+        )
+      `,
+      )
+      .eq("tutor_id", tutor_id);
+
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    const formattedData = data.map((item) => {
+      const enrollment = item.enrollment;
+      const student = enrollment?.student;
+      const schedule = enrollment?.enrollmentschedule?.[0];
+      
+
+      return {
+        
+        id: item.session_id,
+        date:  item.session_date,
+        lesson: item.description,
+        student_name: student?.student_nickname || "ไม่ระบุชื่อ",
+        grade: student?.grade_level?.grade_level_name || "ไม่ระบุชั้น",
+        start_time: schedule?.start_time || "-",
+        end_time: schedule?.end_time || "-",
+      };
+    });
+
+    res.json(formattedData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.put("/api/updateNote", async (req, res) => {
+  const { session_id, note } = req.body;
+  const { data, error } = await supabase
+    .from("classsession")
+    .update({ note: note }) // อัปเดตที่คอลัมน์ note
+    .eq("session_id", session_id); // ระบุแถวที่ต้องการอัปเดต
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true, data });
+});
+
 // app.get("/api/paymentStatus", async (req, res) => {
 //   try {
 //     const { month, year, current_tutor_id } = req.query;
@@ -591,7 +665,7 @@ app.get("/api/getcoursebystudent", async (req, res) => {
     console.error("Error fetching courses:", error);
     res.status(500).json({ error: error.message });
   }
-});
+}); 
 
 app.get("/api/studentName", async (req, res) => {
   try {
