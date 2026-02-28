@@ -312,8 +312,8 @@ app.post("/api/register", async (req, res) => {
           email: email,
           password: password,
           tel: phone,
-          line_id:line,
-          fb_name:facebook,
+          line_id: line,
+          fb_name: facebook,
           date_create: new Date(),
         },
       ])
@@ -467,42 +467,6 @@ app.post("/api/register", async (req, res) => {
 //   res.json(data);
 // });
 
-app.get("/api/getStudentNameByTutor", async (req, res) => {
-  try {
-    const { current_tutor_id } = req.query;
-
-    if (!current_tutor_id) {
-      return res.status(400).json({ error: "tutor_id is required" });
-    }
-
-    // Query to get students taught by this tutor
-    const { data, error } = await supabase
-      .from("Student")
-      .select(
-        `
-        student_id,
-        student_fname,
-        student_lname,
-        student_nickname
-      `,
-      )
-      .in(
-        "student_id",
-        supabase
-          .from("Enrollment")
-          .select("student_id")
-          .eq("tutor_id", current_tutor_id),
-      );
-
-    if (error) throw error;
-
-    res.json(data);
-  } catch (error) {
-    console.error("Error fetching student names:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get tutor ID from account ID
 app.get("/api/getTutorId", async (req, res) => {
   try {
@@ -533,38 +497,21 @@ app.get("/api/getStudentNameByTutor", async (req, res) => {
     const { current_tutor_id } = req.query;
 
     if (!current_tutor_id) {
-      return res.status(400).json({ error: "current_tutor_id is required" });
+      return res.status(400).json({ error: "tutor_id is required" });
     }
 
-    const { data, error } = await supabase
-      .from("Enrollment")
-      .select(
-        `
-        student_id,
-        Student:student_id (
-          student_id,
-          student_Fname,
-          student_Lname,
-          student_nickname,
-          student_picture
-        )
-      `,
-      )
-      .eq("tutor_id", current_tutor_id);
+    const { data, error } = await supabase.rpc("get_students_by_tutor", {
+      p_tutor_id: current_tutor_id,
+    });
 
-    if (error) throw error;
+    if (error) {
+      console.error("RPC error:", error);
+      return res.status(500).json({ error: error.message });
+    }
 
-    // Extract unique students
-    const students = data
-      .map((item) => item.Student)
-      .filter(
-        (student, index, self) =>
-          index === self.findIndex((s) => s.student_id === student.student_id),
-      );
-
-    res.json(students);
+    res.json(data || []);
   } catch (error) {
-    console.error("Error fetching students:", error);
+    console.error("Error fetching student names:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -578,21 +525,25 @@ app.get("/api/getHoursPending", async (req, res) => {
       return res.status(400).json({ error: "current_tutor_id is required" });
     }
 
-    // Call your PostgreSQL function
-    const { data, error } = await supabase.rpc("get_hours_pending", {
-      current_tutor_id: current_tutor_id,
-      specific_course_name: course_name || null,
-    });
+    const { data, error } = await supabase.rpc(
+      "get_hours_pending_per_student",
+      {
+        p_tutor_id: current_tutor_id,
+        p_course_name: course_name || null,
+      },
+    );
 
-    if (error) throw error;
+    if (error) {
+      console.error("RPC error:", error);
+      return res.status(500).json({ error: error.message });
+    }
 
-    res.json({ total_pending_hours: data || 0 });
+    res.json(data || []);
   } catch (error) {
     console.error("Error fetching pending hours:", error);
     res.status(500).json({ error: error.message });
   }
 });
-
 // Get total payment
 app.get("/api/getTotalPayment", async (req, res) => {
   try {
@@ -602,13 +553,15 @@ app.get("/api/getTotalPayment", async (req, res) => {
       return res.status(400).json({ error: "current_tutor_id is required" });
     }
 
-    // Call your price function
     const { data, error } = await supabase.rpc("get_price_total_payment", {
-      current_tutor_id: current_tutor_id,
-      course_name: course_name || null,
+      p_tutor_id: current_tutor_id,
+      p_course_name: course_name || null,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error("RPC error:", error);
+      return res.status(500).json({ error: error.message });
+    }
 
     res.json(data || []);
   } catch (error) {
@@ -637,6 +590,58 @@ app.get("/api/getcoursebystudent", async (req, res) => {
   } catch (error) {
     console.error("Error fetching courses:", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/studentName", async (req, res) => {
+  try {
+    const { current_tutor_id } = req.query;
+
+    if (!current_tutor_id) {
+      return res.status(400).json({ error: "Missing tutor ID" });
+    }
+
+    console.log("Fetching students for tutor:", current_tutor_id);
+
+    // Use a raw SQL query to avoid Supabase join issues
+    const { data, error } = await supabase.rpc("get_students_by_tutor", {
+      tutor_id_param: current_tutor_id,
+    });
+
+    if (error) {
+      console.error("RPC error:", error);
+
+      // Fallback to manual join if RPC fails
+      const { data: enrollments, error: enrollError } = await supabase
+        .from("enrollment")
+        .select("student_id")
+        .eq("tutor_id", current_tutor_id);
+
+      if (enrollError) {
+        throw enrollError;
+      }
+
+      const studentIds = [...new Set(enrollments.map((e) => e.student_id))];
+
+      const { data: students, error: studentError } = await supabase
+        .from("student")
+        .select("*")
+        .in("student_id", studentIds);
+
+      if (studentError) {
+        throw studentError;
+      }
+
+      return res.json(students);
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      message: error.message,
+    });
   }
 });
 

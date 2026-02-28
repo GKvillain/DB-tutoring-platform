@@ -11,11 +11,11 @@ export function PaymentTutor() {
 
   const [expandedId, setExpandedId] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [hoursPending, setHoursPending] = useState([]);
+  const [studentsWithPending, setStudentsWithPending] = useState([]); // Renamed for clarity
   const [selectedCourse, setSelectedCourse] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [totalPayment, setTotalPayment] = useState([]);
+  // Removed unused: totalPayment, students
 
   const christianYear = year > 2500 ? year - 543 : year;
 
@@ -44,41 +44,34 @@ export function PaymentTutor() {
         const tutor_id = tutorData.tutor_id || tutorData;
 
         // 2️⃣ Fetch data in parallel
-        const [courseRes, hoursRes, paymentRes] = await Promise.all([
+        const [courseRes, hoursRes] = await Promise.all([
           fetch(
             `http://localhost:3000/api/getcoursebystudent?current_tutor_id=${tutor_id}`,
           ),
           fetch(
             `http://localhost:3000/api/getHoursPending?current_tutor_id=${tutor_id}&course_name=${selectedCourse}`,
           ),
-          fetch(
-            `http://localhost:3000/api/getTotalPayment?current_tutor_id=${tutor_id}&course_name=${selectedCourse}`,
-          ),
-          fetch(`http://localhost:3000/api/`),
+          // Removed paymentRes and studentRes since hoursPending now has all data
         ]);
 
         const courseData = await courseRes.json();
         const hoursData = await hoursRes.json();
-        const paymentData = await paymentRes.json();
 
         if (!courseRes.ok)
           throw new Error(courseData.error || "Failed to fetch courses");
-
         if (!hoursRes.ok)
           throw new Error(hoursData.error || "Failed to fetch hours");
 
-        if (!paymentRes.ok)
-          throw new Error(paymentData.error || "Failed to fetch payments");
+        console.log("Courses:", courseData);
+        console.log("Students with pending hours:", hoursData);
 
         setCourses(Array.isArray(courseData) ? courseData : []);
-        setHoursPending(Array.isArray(hoursData) ? hoursData : [hoursData]);
-        setTotalPayment(Array.isArray(paymentData) ? paymentData : []);
+        setStudentsWithPending(Array.isArray(hoursData) ? hoursData : []);
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
         setCourses([]);
-        setHoursPending([]);
-        setTotalPayment([]);
+        setStudentsWithPending([]);
       } finally {
         setLoading(false);
       }
@@ -113,29 +106,24 @@ export function PaymentTutor() {
           </div>
         </div>
 
-        {Array.isArray(hoursPending) &&
-          hoursPending.map((stat, index) => {
-            const payment = totalPayment[index] || {};
-
-            return (
+        {studentsWithPending.length > 0
+          ? studentsWithPending.map((student) => (
               <div
-                key={stat.student_id || index}
+                key={student.student_id}
                 className={`student-card ${
-                  expandedId === stat.student_id ? "active" : ""
+                  expandedId === student.student_id ? "active" : ""
                 }`}
-                onClick={() => toggleCard(stat.student_id)}
+                onClick={() => toggleCard(student.student_id)}
               >
                 <div className="student-card-content">
                   <img
                     src={nonggk}
-                    alt={stat.student_name}
+                    alt={student.student_name}
                     className="student-image"
                   />
 
                   <div className="student-name-container">
-                    <p className="student-name">
-                      {stat.student_nickname || "ไม่ระบุชื่อ"}
-                    </p>
+                    <p className="student-name">{student.student_name}</p>
 
                     <select
                       className="selectCourse"
@@ -153,18 +141,18 @@ export function PaymentTutor() {
                   </div>
 
                   <div className="student-details">
-                    <span>{stat.total_pending_hours || 0}</span>
-                    <span>{payment.course_price || 0}</span>
-                    <span>{payment.course_total_price || 0}</span>
+                    <span>{student.total_pending_hours}</span>
+                    <span>{student.course_price}</span>
+                    <span>{student.total_outstanding}</span>
                     <span>
-                      {payment.course_total_price > 0
+                      {student.total_outstanding > 0
                         ? "มียอดค้างชำระ"
                         : "ไม่มียอดค้างชำระ"}
                     </span>
                   </div>
                 </div>
 
-                {expandedId === stat.student_id && (
+                {expandedId === student.student_id && (
                   <div className="expanded-detail">
                     <p>รายละเอียดคาบเรียน</p>
 
@@ -185,19 +173,23 @@ export function PaymentTutor() {
                         <p>
                           เดือน {month}/{christianYear}
                         </p>
-                        <p>{stat.session_hours || 0}</p>
-                        <p>{stat.price || 0}</p>
-                        <p>{stat.total_price || 0}</p>
+                        <p>{student.total_pending_hours}</p>
+                        <p>{student.course_price}</p>
+                        <p>{student.total_outstanding}</p>
                         <p>{isLastDay ? todayFormatted : "-"}</p>
                         <p>-</p>
-                        <p>{stat.payment_status || "-"}</p>
+                        <p>
+                          {student.total_outstanding > 0
+                            ? "รอชำระ"
+                            : "ชำระแล้ว"}
+                        </p>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
-            );
-          })}
+            ))
+          : !loading && <p className="no-data">ไม่มีข้อมูลการชำระเงิน</p>}
       </div>
     </>
   );

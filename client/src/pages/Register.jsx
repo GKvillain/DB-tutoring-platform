@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
-import logo from "../assets/logo.svg";
+// import logo from "../assets/logo.svg";
 
 export function Register() {
   const navigate = useNavigate();
@@ -79,7 +79,11 @@ export function Register() {
 
         <div className="right d-flex">
           <div className="form-section d-block">
-            <img id="logo-login" src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/logo.svg" alt="Logo" />
+            <img
+              id="logo-login"
+              src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/logo.svg"
+              alt="Logo"
+            />
 
             <div className="choose">
               <h3>

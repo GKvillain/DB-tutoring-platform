@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
-import logo from "../assets/logo.svg";
+// import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
 
 export function Login() {
@@ -71,7 +71,11 @@ export function Login() {
 
         <div className="right d-flex">
           <div className="form-section d-block">
-            <img id="logo-login" src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/logo.svg" alt="Logo" />
+            <img
+              id="logo-login"
+              src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/logo.svg"
+              alt="Logo"
+            />
 
             <div className="choose">
               <div className="choose-left">
@@ -122,10 +126,12 @@ export function Login() {
               </a>
             </div>
 
-            <form  onSubmit={handleLogin}>
+            <form onSubmit={handleLogin}>
               <div className="lower">
                 <button type="submit" className="login-btn">
-                  <Link className="link-home" to="/TutorHome">เข้าสู่ระบบ</Link>
+                  <Link className="link-home" to="/TutorHome">
+                    เข้าสู่ระบบ
+                  </Link>
                 </button>
                 <p className="register-text">
                   ยังไม่มีบัญชีใช่ไหม?
@@ -133,7 +139,6 @@ export function Login() {
                 </p>
               </div>
             </form>
-
           </div>
         </div>
       </div>
