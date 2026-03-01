@@ -12,6 +12,7 @@ import {
   CreditCard,
   LineChart,
   User,
+  Search
 } from "lucide-react";
 import "./ParentSidebar.css";
 
@@ -42,8 +43,8 @@ export default function ParentSidebar() {
           </div>
 
           <NavLink to="" className="nav-link">
-            <PenSquare size={18} />
-            {expanded && <span>ค้นหาคอร์สเรียน</span>}
+            <Search size={18} />
+            {expanded && <span>คอร์สเรียนทั้งหมด</span>}
           </NavLink>
 
           <NavLink to="" className="nav-link">
