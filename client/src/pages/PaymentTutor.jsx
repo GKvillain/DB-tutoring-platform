@@ -6,7 +6,7 @@ import { DailyTracker } from "../utils/DailyTracker";
 import { useDateInfo } from "../hooks/useDateInfo";
 
 export function PaymentTutor() {
-  const { todayFormatted, month, year, isLastDay } = useDateInfo();
+  const { month, year } = useDateInfo();
   const accountId = localStorage.getItem("account_id");
 
   const [expandedId, setExpandedId] = useState(null);
@@ -14,8 +14,7 @@ export function PaymentTutor() {
   const [selectedCourseByStudent, setSelectedCourseByStudent] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const christianYear = year > 2500 ? year - 543 : year;
+  const [detail, setDetail] = useState([]);
 
   const toggleCard = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -40,7 +39,6 @@ export function PaymentTutor() {
       setError(null);
 
       try {
-        // 1️⃣ Get tutor ID
         const tutorRes = await fetch(
           `http://localhost:3000/api/getTutorId?account_id=${accountId}`,
         );
@@ -52,18 +50,24 @@ export function PaymentTutor() {
 
         const tutor_id = tutorData.tutor_id || tutorData;
 
-        // 2️⃣ Fetch pending hours
         const hoursRes = await fetch(
           `http://localhost:3000/api/getHoursPending?current_tutor_id=${tutor_id}`,
         );
 
         const hoursData = await hoursRes.json();
 
+        const detailRes = await fetch(
+          `http://localhost:3000/api/getDetailPayment?current_tutor_id=${tutor_id}`,
+        );
+
+        const detailData = await detailRes.json();
+
         if (!hoursRes.ok) {
           throw new Error(hoursData.error || "Failed to fetch hours");
         }
 
         setPendingData(Array.isArray(hoursData) ? hoursData : []);
+        setDetail(Array.isArray(detailData) ? detailData : []);
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
@@ -76,7 +80,6 @@ export function PaymentTutor() {
     fetchPaymentData();
   }, [month, year, accountId]);
 
-  // 🔥 Group pending data by student
   const studentsWithCourses = useMemo(() => {
     const studentMap = new Map();
 
@@ -98,7 +101,6 @@ export function PaymentTutor() {
       });
     });
 
-    // Initialize dropdown selection
     const initialSelections = {};
     Array.from(studentMap.keys()).forEach((studentId) => {
       initialSelections[studentId] = "";
@@ -108,7 +110,24 @@ export function PaymentTutor() {
     return Array.from(studentMap.values());
   }, [pendingData]);
 
-  // 🔥 Filter courses per student
+  const groupedDetailsByStudent = useMemo(() => {
+    const grouped = {};
+
+    detail.forEach((session) => {
+      if (!grouped[session.student_id]) {
+        grouped[session.student_id] = {};
+      }
+
+      if (!grouped[session.student_id][session.course_name_thai]) {
+        grouped[session.student_id][session.course_name_thai] = [];
+      }
+
+      grouped[session.student_id][session.course_name_thai].push(session);
+    });
+
+    return grouped;
+  }, [detail]);
+
   const getFilteredCoursesForStudent = (student) => {
     const selectedCourse = selectedCourseByStudent[student.student_id];
 
@@ -117,7 +136,19 @@ export function PaymentTutor() {
     return student.courses.filter((c) => c.course_name_thai === selectedCourse);
   };
 
-  // 🔥 Calculate totals
+  const getFilteredGroupedDetailsForStudent = (studentId) => {
+    const selectedCourse = selectedCourseByStudent[studentId];
+    const studentGrouped = groupedDetailsByStudent[studentId] || {};
+
+    if (selectedCourse) {
+      return {
+        [selectedCourse]: studentGrouped[selectedCourse] || [],
+      };
+    }
+
+    return studentGrouped;
+  };
+
   const calculateStudentTotals = (student) => {
     const filteredCourses = getFilteredCoursesForStudent(student);
 
@@ -173,10 +204,11 @@ export function PaymentTutor() {
         {studentsWithCourses.length > 0
           ? studentsWithCourses.map((student) => {
               const totals = calculateStudentTotals(student);
-              const filteredCourses = getFilteredCoursesForStudent(student);
+              const groupedDetails = getFilteredGroupedDetailsForStudent(
+                student.student_id,
+              );
               const hasOutstanding = totals.total_outstanding > 0;
 
-              // 🔥 remove duplicate courses for dropdown
               const uniqueCourses = [
                 ...new Map(
                   student.courses.map((c) => [c.course_name_thai, c]),
@@ -242,39 +274,83 @@ export function PaymentTutor() {
                     <div className="expanded-detail">
                       <p>รายละเอียดคาบเรียน</p>
 
-                      {filteredCourses.map((course, index) => (
-                        <div key={index} className="payment-details">
-                          <div className="topic-inner-detail">
-                            <h4>ครั้งที่</h4>
-                            <h4>คอร์ส</h4>
-                            <h4>เดือน</h4>
-                            <h4>คาบเรียน</h4>
-                            <h4>ราคาต่อชั่วโมง</h4>
-                            <h4>ยอดชำระ</h4>
-                            <h4>วันที่คำนวณ</h4>
-                            <h4>วันที่ชำระ</h4>
-                            <h4>สถานะ</h4>
-                          </div>
+                      {Object.keys(groupedDetails).length > 0 ? (
+                        Object.entries(groupedDetails).map(
+                          ([courseName, sessions], courseIndex) => (
+                            <div key={courseIndex} className="course-section">
+                              <h3 className="course-title">{courseName}</h3>
 
-                          <div className="topic-inner-detail">
-                            <p>{index + 1}</p>
-                            <p>{course.course_name_thai}</p>
-                            <p>
-                              เดือน {month}/{christianYear}
-                            </p>
-                            <p>{course.total_pending_hours}</p>
-                            <p>{course.course_price}</p>
-                            <p>{course.total_outstanding}</p>
-                            <p>{isLastDay ? todayFormatted : "-"}</p>
-                            <p>-</p>
-                            <p>
-                              {course.total_outstanding > 0
-                                ? "รอชำระ"
-                                : "ชำระแล้ว"}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                              <div className="topic-inner-detail">
+                                <h4>ครั้งที่</h4>
+                                <h4>เดือน</h4>
+                                <h4>คาบเรียน (ชม.)</h4>
+                                <h4>ราคาต่อชั่วโมง</h4>
+                                <h4>ยอดชำระ</h4>
+                                <h4>วันที่คำนวณยอดชำระ</h4>
+                                <h4>วันที่ชำระเงิน</h4>
+                                <h4>สถานะ</h4>
+                              </div>
+
+                              {sessions.map((session, index) => (
+                                <div
+                                  key={index}
+                                  className="topic-inner-detail session-row"
+                                >
+                                  <p>{index + 1}</p>
+                                  <p>{session.month_name}</p>
+                                  <p>{session.total_hours}</p>
+                                  <p>{session.price_per_hour}</p>
+                                  <p>{session.total_amount}</p>
+                                  <p>{session.payment_date}</p>
+                                  <p>{session.paid_date || "-"}</p>
+                                  <p>
+                                    <span
+                                      className={`status-badge ${session.payment_status === "PAID" ? "paid" : "pending"}`}
+                                    >
+                                      {session.payment_status === "PAID"
+                                        ? "ชำระแล้ว"
+                                        : "รอชำระ"}
+                                    </span>
+                                  </p>
+                                </div>
+                              ))}
+
+                              <div className="course-summary">
+                                <p>รวมทั้งสิ้น: {sessions.length} ครั้ง</p>
+                                <p>
+                                  รวมชั่วโมง:{" "}
+                                  {sessions
+                                    .reduce(
+                                      (sum, s) =>
+                                        sum + parseFloat(s.total_hours || 0),
+                                      0,
+                                    )
+                                    .toFixed(2)}{" "}
+                                  ชม.
+                                </p>
+                                <p>
+                                  รวมยอด:{" "}
+                                  {sessions
+                                    .reduce(
+                                      (sum, s) =>
+                                        sum + parseFloat(s.total_amount || 0),
+                                      0,
+                                    )
+                                    .toFixed(2)}{" "}
+                                  บาท
+                                </p>
+                              </div>
+
+                              {courseIndex <
+                                Object.keys(groupedDetails).length - 1 && (
+                                <hr className="course-divider" />
+                              )}
+                            </div>
+                          ),
+                        )
+                      ) : (
+                        <p className="no-details">ไม่มีรายละเอียดคาบเรียน</p>
+                      )}
                     </div>
                   )}
                 </div>

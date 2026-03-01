@@ -17,7 +17,6 @@ body {
   padding: 2rem;
 }
 
-/* Search Section */
 .search-section {
   margin-bottom: 2rem;
   display: flex;
@@ -47,7 +46,6 @@ body {
   opacity: 0.7;
 }
 
-/* Titles */
 .payment-title {
   text-align: center;
   color: #a084dc;
@@ -64,7 +62,6 @@ body {
   font-weight: 400;
 }
 
-/* Payment Header */
 .payment-header {
   display: grid;
   grid-template-columns: 80px 150px 1fr;
@@ -87,7 +84,7 @@ body {
 
 .header-details {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   text-align: center;
 }
@@ -99,7 +96,6 @@ body {
   text-align: center;
 }
 
-/* Student Card */
 .student-card {
   background-color: white;
   border-radius: 20px;
@@ -113,6 +109,11 @@ body {
 .student-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 25px rgba(160, 132, 220, 0.25);
+}
+
+.student-card.active {
+  background-color: #f1eaff;
+  border: 2px solid #a084dc;
 }
 
 .student-card-content {
@@ -145,7 +146,6 @@ body {
   text-overflow: ellipsis;
 }
 
-/* Select Course Dropdown */
 .selectCourse {
   margin-top: 0.5rem;
   width: 100%;
@@ -159,7 +159,7 @@ body {
   cursor: pointer;
   outline: none;
   transition: all 0.3s ease;
-  appearance: none; /* remove default arrow */
+  appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg fill='%23a084dc' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -184,7 +184,7 @@ body {
 
 .student-details {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   align-items: center;
   text-align: center;
@@ -212,13 +212,11 @@ body {
   animation: fadeIn 0.3s ease-in-out;
 }
 
-.expanded-detail p {
-  color: #666;
-  margin-bottom: 0.5rem;
-}
-
-.expanded-detail p:last-child {
-  margin-bottom: 0;
+.expanded-detail > p:first-child {
+  color: #a084dc;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
 }
 
 @keyframes fadeIn {
@@ -232,68 +230,182 @@ body {
   }
 }
 
-.expanded-detail {
-  width: 100%;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+.course-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.1);
 }
-.student-card.active {
-  background-color: #f1eaff;
-  border: 2px solid #a084dc;
+
+.course-section:last-child {
+  margin-bottom: 0;
 }
-.payment-details {
+
+.course-title {
+  color: #a084dc;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ebc7e6;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .topic-inner-detail {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 0.5rem;
+  gap: 10px;
   align-items: center;
-  padding: 0.5rem;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.topic-inner-detail:first-child {
+.topic-inner-detail:first-of-type {
   background-color: #ebc7e6;
-  font-weight: bold;
-  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
-.topic-inner-detail h4,
-.topic-inner-detail p {
-  margin: 0;
+.topic-inner-detail h4 {
   font-size: 14px;
+  color: #444;
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.topic-inner-detail:first-of-type h4 {
+  color: white;
+}
+
+.session-row {
+  background-color: #f8f6ff;
+  margin-bottom: 5px;
+  transition: all 0.2s ease;
+}
+
+.session-row:hover {
+  background-color: #f1eaff;
+  transform: translateX(5px);
 }
 
 .topic-inner-detail p {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 14px;
+  margin: 0;
+  color: #666;
+  text-align: center;
 }
 
-/* Responsive design for smaller screens */
+.course-summary {
+  margin-top: 15px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #a084dc20 0%, #ebc7e620 100%);
+  border-radius: 10px;
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  border: 1px solid #ebc7e6;
+}
+
+.course-summary p {
+  margin: 0;
+  font-weight: 600;
+  color: #a084dc;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-summary p::before {
+  content: "•";
+  color: #ebc7e6;
+  font-size: 20px;
+}
+
+.course-summary p:first-child::before {
+  content: "";
+  display: none;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
+}
+
+.status-badge.paid {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #a5d6a5;
+}
+
+.status-badge.pending {
+  background-color: #fff3e0;
+  color: #ed6c02;
+  border: 1px solid #ffb74d;
+}
+
+.course-divider {
+  margin: 30px 0 20px;
+  border: none;
+  border-top: 2px dashed #ebc7e6;
+}
+
+.course-divider:last-of-type {
+  display: none;
+}
+
+.no-details {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-style: italic;
+  background-color: white;
+  border-radius: 10px;
+  border: 2px dashed #ebc7e6;
+}
+
+.no-data-container {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(160, 132, 220, 0.15);
+}
+
+.no-data {
+  color: #a084dc;
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+.loading-spinner {
+  text-align: center;
+  color: #a084dc;
+  padding: 40px;
+  font-size: 1.2rem;
+}
+
 @media (max-width: 1200px) {
   .topic-inner-detail {
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: 60px 100px 80px 100px 100px 100px 80px;
+    gap: 8px;
     font-size: 12px;
   }
-}
 
-@media (max-width: 768px) {
-  .payment-details {
-    overflow-x: auto;
-  }
-
-  .topic-inner-detail {
-    width: max-content;
+  .course-summary {
+    gap: 20px;
   }
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   .payment-header,
   .student-card-content {
@@ -309,6 +421,14 @@ body {
 
   .header-item {
     font-size: 0.9rem;
+  }
+
+  .expanded-detail {
+    padding: 1rem;
+  }
+
+  .course-section {
+    padding: 15px;
   }
 }
 
@@ -339,9 +459,24 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
+  .course-section {
+    overflow-x: auto;
+  }
 
-  .expanded-detail {
-    text-align: center;
+  .topic-inner-detail {
+    width: 100%;
+    min-width: 700px;
+  }
+
+  .course-summary {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .status-badge {
+    min-width: 70px;
+    padding: 4px 8px;
   }
 }
 
@@ -356,5 +491,24 @@ body {
 
   .student-details {
     grid-template-columns: 1fr;
+  }
+
+  .course-summary p {
+    font-size: 12px;
+  }
+
+  .course-title {
+    font-size: 1rem;
+  }
+}
+
+@media print {
+  .payment-header,
+  .student-card {
+    break-inside: avoid;
+  }
+
+  .status-badge.paid {
+    border: 1px solid #000;
   }
 }

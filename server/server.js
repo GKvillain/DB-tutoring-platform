@@ -114,22 +114,22 @@ app.get("/api/dashboard", async (req, res) => {
       supabase.rpc("get_total_hours_month_year", {
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id, // Changed from current_tutor_id
+        p_tutor_id: tutor_id,
       }),
       supabase.rpc("get_student_count", {
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id, // Changed from current_tutor_id
+        p_tutor_id: tutor_id,
       }),
       supabase.rpc("get_total_sessions", {
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id, // Changed from current_tutor_id
+        p_tutor_id: tutor_id,
       }),
       supabase.rpc("get_total_income", {
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id, // Changed from current_tutor_id
+        p_tutor_id: tutor_id,
       }),
     ]);
 
@@ -563,7 +563,6 @@ app.get("/api/getTutorId", async (req, res) => {
   }
 });
 
-// Get courses by tutor
 app.get("/api/getcoursebystudent", async (req, res) => {
   try {
     const { current_tutor_id } = req.query;
@@ -586,38 +585,6 @@ app.get("/api/getcoursebystudent", async (req, res) => {
   }
 });
 
-// Get pending hours per student (with optional course filter)
-// app.get("/api/getHoursPending", async (req, res) => {
-//   try {
-//     const { current_tutor_id, course_name } = req.query;
-
-//     if (!current_tutor_id) {
-//       return res.status(400).json({ error: "current_tutor_id is required" });
-//     }
-
-//     // Call the PostgreSQL function we created
-//     const { data, error } = await supabase.rpc(
-//       "get_hours_pending_per_student",
-//       {
-//         p_tutor_id: current_tutor_id,
-//         p_course_name: course_name || null,
-//       },
-//     );
-
-//     if (error) {
-//       console.error("RPC error:", error);
-//       return res.status(500).json({ error: error.message });
-//     }
-
-//     res.json(data || []);
-//   } catch (error) {
-//     console.error("Error fetching pending hours:", error);
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// Alternative: Get pending hours with raw query if RPC doesn't work
-// Get pending hours per student
 app.get("/api/getHoursPending", async (req, res) => {
   try {
     const { current_tutor_id, course_name } = req.query;
@@ -626,218 +593,203 @@ app.get("/api/getHoursPending", async (req, res) => {
       return res.status(400).json({ error: "current_tutor_id is required" });
     }
 
-    // First, try to use the RPC function
-    try {
-      const { data, error } = await supabase.rpc(
-        "get_hours_pending_per_student",
-        {
-          p_tutor_id: current_tutor_id,
-          p_course_name: course_name || null,
-        },
-      );
-
-      if (!error && data) {
-        return res.json(data);
-      }
-    } catch (rpcError) {
-      console.log(
-        "RPC failed, falling back to manual query:",
-        rpcError.message,
-      );
-    }
-
-    // Fallback: Manual query using your schema
-    console.log("Using manual query for tutor:", current_tutor_id);
-
-    // Get all enrollments for this tutor with related data
-    const { data: enrollments, error: enrollError } = await supabase
-      .from("Enrollment")
-      .select(
-        `
-        enrollment_id,
-        student_id,
-        course_id,
-        Student!inner (
-          student_id,
-          student_Fname,
-          student_Lname
-        ),
-        Course!inner (
-          course_id,
-          course_name_thai,
-          course_name_eng,
-          price
-        )
-      `,
-      )
-      .eq("Course.tutor_id", current_tutor_id);
-
-    if (enrollError) {
-      console.error("Enrollment error:", enrollError);
-      return res.status(500).json({ error: enrollError.message });
-    }
-
-    const result = [];
-
-    // For each enrollment, calculate pending hours
-    for (const enrollment of enrollments) {
-      const course = enrollment.Course;
-      const student = enrollment.Student;
-
-      // Apply course filter if specified
-      if (
-        course_name &&
-        course.course_name_thai !== course_name &&
-        course.course_name_eng !== course_name
-      ) {
-        continue;
-      }
-
-      // Get all class sessions for this enrollment
-      const { data: sessions, error: sessionError } = await supabase
-        .from("ClassSession")
-        .select("session_id, session_date")
-        .eq("enrollment_id", enrollment.enrollment_id);
-
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        continue;
-      }
-
-      let totalPendingHours = 0;
-
-      // For each session, check if it's paid
-      for (const session of sessions) {
-        const sessionDate = new Date(session.session_date);
-        const sessionMonth = new Date(
-          sessionDate.getFullYear(),
-          sessionDate.getMonth(),
-          1,
-        );
-
-        // Check if this session month is paid
-        const { data: payments, error: paymentError } = await supabase
-          .from("Payment")
-          .select(
-            `
-            payment_id,
-            PaymentDetail!inner (
-              payment_bill_date,
-              payment_status
-            )
-          `,
-          )
-          .eq("enrollment_id", enrollment.enrollment_id)
-          .eq("PaymentDetail.payment_status", "PAID");
-
-        if (paymentError) continue;
-
-        // Get schedule to calculate hours
-        const dayOfWeek = sessionDate.getDay().toString();
-        const { data: schedule, error: scheduleError } = await supabase
-          .from("EnrollmentSchedule")
-          .select("start_time, end_time")
-          .eq("enrollment_id", enrollment.enrollment_id)
-          .eq("day_of_week", dayOfWeek);
-
-        if (scheduleError || !schedule || schedule.length === 0) continue;
-
-        // Calculate hours
-        const start = schedule[0].start_time;
-        const end = schedule[0].end_time;
-
-        // Parse time strings (format: "HH:MM:SS")
-        const [startHour, startMinute] = start.split(":").map(Number);
-        const [endHour, endMinute] = end.split(":").map(Number);
-
-        const hours = endHour + endMinute / 60 - (startHour + startMinute / 60);
-
-        // Check if this month is paid
-        const isPaid =
-          payments &&
-          payments.some(
-            (p) =>
-              p.PaymentDetail &&
-              p.PaymentDetail.some((pd) => {
-                const paymentDate = new Date(pd.payment_bill_date);
-                return (
-                  paymentDate.getMonth() === sessionDate.getMonth() &&
-                  paymentDate.getFullYear() === sessionDate.getFullYear()
-                );
-              }),
-          );
-
-        if (!isPaid) {
-          totalPendingHours += hours;
-        }
-      }
-
-      // Only include if has pending hours or no filter
-      if (totalPendingHours > 0 || !course_name) {
-        // Check if we already have this student+course combination
-        const existingIndex = result.findIndex(
-          (r) =>
-            r.student_id === student.student_id &&
-            r.course_name_thai === course.course_name_thai,
-        );
-
-        const studentName =
-          `${student.student_Fname || ""} ${student.student_Lname || ""}`.trim();
-        const pendingHours = Math.round(totalPendingHours * 100) / 100;
-        const outstanding =
-          Math.round(totalPendingHours * course.price * 100) / 100;
-
-        if (existingIndex >= 0) {
-          // Add to existing record
-          result[existingIndex].total_pending_hours += pendingHours;
-          result[existingIndex].total_outstanding += outstanding;
-        } else {
-          // Create new record
-          result.push({
-            student_id: student.student_id,
-            student_name: studentName || `Student ${student.student_id}`,
-            course_name_eng: course.course_name_eng,
-            course_name_thai: course.course_name_thai,
-            total_pending_hours: pendingHours,
-            course_price: course.price,
-            total_outstanding: outstanding,
-            payment_status: pendingHours > 0 ? "PENDING" : "PAID",
-          });
-        }
-      }
-    }
-
-    res.json(result);
-  } catch (error) {
-    console.error("Error in getHoursPending:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Helper endpoint to check student table structure (for debugging)
-app.get("/api/check-student-structure", async (req, res) => {
-  try {
-    const { data, error } = await supabase.from("Student").select("*").limit(1);
+    // Call the PostgreSQL function we created
+    const { data, error } = await supabase.rpc(
+      "get_hours_pending_per_student",
+      {
+        p_tutor_id: current_tutor_id,
+        p_course_name: course_name || null,
+      },
+    );
 
     if (error) {
+      console.error("RPC error:", error);
       return res.status(500).json({ error: error.message });
     }
 
-    if (data && data.length > 0) {
-      const columns = Object.keys(data[0]);
-      res.json({
-        columns,
-        sample: data[0],
-      });
-    } else {
-      res.json({ message: "No students found" });
-    }
+    res.json(data || []);
   } catch (error) {
+    console.error("Error fetching pending hours:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get total payment summary
+// app.get("/api/getHoursPending", async (req, res) => {
+//   try {
+//     const { current_tutor_id, course_name } = req.query;
+
+//     if (!current_tutor_id) {
+//       return res.status(400).json({ error: "current_tutor_id is required" });
+//     }
+
+//     try {
+//       const { data, error } = await supabase.rpc(
+//         "get_hours_pending_per_student",
+//         {
+//           p_tutor_id: current_tutor_id,
+//           p_course_name: course_name || null,
+//         },
+//       );
+
+//       if (!error && data) {
+//         return res.json(data);
+//       }
+//     } catch (rpcError) {
+//       console.log(
+//         "RPC failed, falling back to manual query:",
+//         rpcError.message,
+//       );
+//     }
+//     console.log("Using manual query for tutor:", current_tutor_id);
+
+//     const { data: enrollments, error: enrollError } = await supabase
+//       .from("Enrollment")
+//       .select(
+//         `
+//         enrollment_id,
+//         student_id,
+//         course_id,
+//         Student!inner (
+//           student_id,
+//           student_Fname,
+//           student_Lname
+//         ),
+//         Course!inner (
+//           course_id,
+//           course_name_thai,
+//           course_name_eng,
+//           price
+//         )
+//       `,
+//       )
+//       .eq("Course.tutor_id", current_tutor_id);
+
+//     if (enrollError) {
+//       console.error("Enrollment error:", enrollError);
+//       return res.status(500).json({ error: enrollError.message });
+//     }
+
+//     const result = [];
+
+//     for (const enrollment of enrollments) {
+//       const course = enrollment.Course;
+//       const student = enrollment.Student;
+
+//       if (
+//         course_name &&
+//         course.course_name_thai !== course_name &&
+//         course.course_name_eng !== course_name
+//       ) {
+//         continue;
+//       }
+//       const { data: sessions, error: sessionError } = await supabase
+//         .from("ClassSession")
+//         .select("session_id, session_date")
+//         .eq("enrollment_id", enrollment.enrollment_id);
+
+//       if (sessionError) {
+//         console.error("Session error:", sessionError);
+//         continue;
+//       }
+
+//       let totalPendingHours = 0;
+
+//       for (const session of sessions) {
+//         const sessionDate = new Date(session.session_date);
+//         const sessionMonth = new Date(
+//           sessionDate.getFullYear(),
+//           sessionDate.getMonth(),
+//           1,
+//         );
+
+//         const { data: payments, error: paymentError } = await supabase
+//           .from("Payment")
+//           .select(
+//             `
+//             payment_id,
+//             PaymentDetail!inner (
+//               payment_bill_date,
+//               payment_status
+//             )
+//           `,
+//           )
+//           .eq("enrollment_id", enrollment.enrollment_id)
+//           .eq("PaymentDetail.payment_status", "PAID");
+
+//         if (paymentError) continue;
+
+//         const dayOfWeek = sessionDate.getDay().toString();
+//         const { data: schedule, error: scheduleError } = await supabase
+//           .from("EnrollmentSchedule")
+//           .select("start_time, end_time")
+//           .eq("enrollment_id", enrollment.enrollment_id)
+//           .eq("day_of_week", dayOfWeek);
+
+//         if (scheduleError || !schedule || schedule.length === 0) continue;
+
+//         const start = schedule[0].start_time;
+//         const end = schedule[0].end_time;
+
+//         const [startHour, startMinute] = start.split(":").map(Number);
+//         const [endHour, endMinute] = end.split(":").map(Number);
+
+//         const hours = endHour + endMinute / 60 - (startHour + startMinute / 60);
+//         const isPaid =
+//           payments &&
+//           payments.some(
+//             (p) =>
+//               p.PaymentDetail &&
+//               p.PaymentDetail.some((pd) => {
+//                 const paymentDate = new Date(pd.payment_bill_date);
+//                 return (
+//                   paymentDate.getMonth() === sessionDate.getMonth() &&
+//                   paymentDate.getFullYear() === sessionDate.getFullYear()
+//                 );
+//               }),
+//           );
+
+//         if (!isPaid) {
+//           totalPendingHours += hours;
+//         }
+//       }
+//       if (totalPendingHours > 0 || !course_name) {
+//         const existingIndex = result.findIndex(
+//           (r) =>
+//             r.student_id === student.student_id &&
+//             r.course_name_thai === course.course_name_thai,
+//         );
+
+//         const studentName =
+//           `${student.student_Fname || ""} ${student.student_Lname || ""}`.trim();
+//         const pendingHours = Math.round(totalPendingHours * 100) / 100;
+//         const outstanding =
+//           Math.round(totalPendingHours * course.price * 100) / 100;
+
+//         if (existingIndex >= 0) {
+//           result[existingIndex].total_pending_hours += pendingHours;
+//           result[existingIndex].total_outstanding += outstanding;
+//         } else {
+//           result.push({
+//             student_id: student.student_id,
+//             student_name: studentName || `Student ${student.student_id}`,
+//             course_name_eng: course.course_name_eng,
+//             course_name_thai: course.course_name_thai,
+//             total_pending_hours: pendingHours,
+//             course_price: course.price,
+//             total_outstanding: outstanding,
+//             payment_status: pendingHours > 0 ? "PENDING" : "PAID",
+//           });
+//         }
+//       }
+//     }
+
+//     res.json(result);
+//   } catch (error) {
+//     console.error("Error in getHoursPending:", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 app.get("/api/getTotalPayment", async (req, res) => {
   try {
     const { current_tutor_id, course_name } = req.query;
@@ -863,7 +815,6 @@ app.get("/api/getTotalPayment", async (req, res) => {
   }
 });
 
-// Get students by tutor ID (using RPC)
 app.get("/api/getStudentNameByTutor", async (req, res) => {
   try {
     const { current_tutor_id } = req.query;
@@ -888,60 +839,56 @@ app.get("/api/getStudentNameByTutor", async (req, res) => {
   }
 });
 
-// Alternative: Get students by tutor ID (manual join)
-app.get("/api/studentName", async (req, res) => {
-  try {
-    const { current_tutor_id } = req.query;
+// app.get("/api/studentName", async (req, res) => {
+//   try {
+//     const { current_tutor_id } = req.query;
 
-    if (!current_tutor_id) {
-      return res.status(400).json({ error: "Missing tutor ID" });
-    }
+//     if (!current_tutor_id) {
+//       return res.status(400).json({ error: "Missing tutor ID" });
+//     }
 
-    console.log("Fetching students for tutor:", current_tutor_id);
+//     console.log("Fetching students for tutor:", current_tutor_id);
 
-    // Try RPC first
-    const { data, error } = await supabase.rpc("get_students_by_tutor", {
-      tutor_id_param: current_tutor_id,
-    });
+//     const { data, error } = await supabase.rpc("get_students_by_tutor", {
+//       tutor_id_param: current_tutor_id,
+//     });
 
-    if (error) {
-      console.error("RPC error:", error);
+//     if (error) {
+//       console.error("RPC error:", error);
 
-      // Fallback to manual join if RPC fails
-      const { data: enrollments, error: enrollError } = await supabase
-        .from("enrollment")
-        .select("student_id")
-        .eq("tutor_id", current_tutor_id);
+//       const { data: enrollments, error: enrollError } = await supabase
+//         .from("enrollment")
+//         .select("student_id")
+//         .eq("tutor_id", current_tutor_id);
 
-      if (enrollError) {
-        throw enrollError;
-      }
+//       if (enrollError) {
+//         throw enrollError;
+//       }
 
-      const studentIds = [...new Set(enrollments.map((e) => e.student_id))];
+//       const studentIds = [...new Set(enrollments.map((e) => e.student_id))];
 
-      const { data: students, error: studentError } = await supabase
-        .from("student")
-        .select("*")
-        .in("student_id", studentIds);
+//       const { data: students, error: studentError } = await supabase
+//         .from("student")
+//         .select("*")
+//         .in("student_id", studentIds);
 
-      if (studentError) {
-        throw studentError;
-      }
+//       if (studentError) {
+//         throw studentError;
+//       }
 
-      return res.json(students);
-    }
+//       return res.json(students);
+//     }
 
-    res.json(data);
-  } catch (error) {
-    console.error("Server error:", error);
-    res.status(500).json({
-      error: "Internal server error",
-      message: error.message,
-    });
-  }
-});
+//     res.json(data);
+//   } catch (error) {
+//     console.error("Server error:", error);
+//     res.status(500).json({
+//       error: "Internal server error",
+//       message: error.message,
+//     });
+//   }
+// });
 
-// Get detailed pending hours with monthly breakdown
 app.get("/api/getMonthlyPendingHours", async (req, res) => {
   try {
     const { current_tutor_id, student_id, course_name } = req.query;
@@ -982,7 +929,6 @@ app.get("/api/getMonthlyPendingHours", async (req, res) => {
 
     if (error) throw error;
 
-    // Group by student and month
     const result = [];
     const studentMap = new Map();
 
@@ -991,7 +937,6 @@ app.get("/api/getMonthlyPendingHours", async (req, res) => {
       const studentName = `${session.enrollment.student.first_name} ${session.enrollment.student.last_name}`;
       const course = session.enrollment.course;
 
-      // Apply course filter
       if (
         course_name &&
         course.course_name_thai !== course_name &&
@@ -1034,7 +979,6 @@ app.get("/api/getMonthlyPendingHours", async (req, res) => {
         });
       }
 
-      // Get schedule to calculate hours
       const { data: schedule } = await supabase
         .from("EnrollmentSchedule")
         .select("start_time, end_time")
@@ -1055,11 +999,9 @@ app.get("/api/getMonthlyPendingHours", async (req, res) => {
       }
     }
 
-    // Format the result
     for (const [studentId, student] of studentMap) {
       for (const [monthKey, month] of student.months) {
         for (const [courseKey, course] of month.courses) {
-          // Check if paid
           const { data: payments } = await supabase
             .from("Payment")
             .select(
@@ -1107,6 +1049,31 @@ app.get("/api/getMonthlyPendingHours", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error("Error fetching monthly pending hours:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/getDetailPayment", async (req, res) => {
+  try {
+    const { current_tutor_id, p_student_id, p_course_name } = req.query;
+
+    if (!current_tutor_id) {
+      return res.status(400).json({ error: "current_tutor_id is required" });
+    }
+
+    const { data, error } = await supabase.rpc("get_monthly_payment_details", {
+      p_tutor_id: current_tutor_id,
+      p_student_id: p_student_id || null,
+      p_course_name: p_course_name || null,
+    });
+
+    if (error) {
+      console.error("Supabase RPC error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+    res.json(data || []);
+  } catch (error) {
+    console.error("Server error:", error);
     res.status(500).json({ error: error.message });
   }
 });

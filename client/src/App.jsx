@@ -13,8 +13,8 @@ import TutorHome from "./pages/TutorHome";
 function App() {
   return (
     <Routes>
-      <Route path="teaching/statistics" element={<StatTutor />} />
-      <Route path="payment/statuspayment" element={<PaymentTutor />} />
+      <Route path="/teaching/statistic" element={<StatTutor />} />
+      <Route path="/finance/payment-status" element={<PaymentTutor />} />
       <Route path="student/summary" element={<Summary />} />
       {/* <Route path="LoginPage" element={<Login />} /> */}
       <Route path="/Login" element={<Login />} />
