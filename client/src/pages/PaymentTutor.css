@@ -145,6 +145,43 @@ body {
   text-overflow: ellipsis;
 }
 
+/* Select Course Dropdown */
+.selectCourse {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 25px;
+  border: 2px solid #ebc7e6;
+  background-color: white;
+  color: #a084dc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  appearance: none; /* remove default arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23a084dc' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  box-shadow: 0 4px 6px rgba(160, 132, 220, 0.1);
+}
+
+.selectCourse:hover {
+  border-color: #a084dc;
+  box-shadow: 0 6px 12px rgba(160, 132, 220, 0.2);
+}
+
+.selectCourse:focus {
+  border-color: #a084dc;
+  box-shadow: 0 0 0 3px rgba(160, 132, 220, 0.2);
+}
+
+.selectCourse option {
+  color: #444;
+  font-weight: 500;
+}
+
 .student-details {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
