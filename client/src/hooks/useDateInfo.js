@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 export function useDateInfo() {
   const [dateInfo, setDateInfo] = useState({
     todayFormatted: "",
-    month: 0, // Add this
-    year: 0, // Add this
+    month: 0,
+    year: 0,
     isLastDay: false,
   });
 
@@ -23,8 +23,8 @@ export function useDateInfo() {
 
       setDateInfo({
         todayFormatted: formatted,
-        month: now.getMonth() + 1, // Add this
-        year: now.getFullYear(), // Add this
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
         isLastDay: tomorrow.getDate() === 1,
       });
     };

@@ -88,6 +88,7 @@ export function PaymentTutor() {
         studentMap.set(record.student_id, {
           student_id: record.student_id,
           student_name: record.student_name,
+          student_picture: record.student_picture,
           courses: [],
         });
       }
@@ -225,7 +226,7 @@ export function PaymentTutor() {
                 >
                   <div className="student-card-content">
                     <img
-                      src={nonggk}
+                      src={student.student_picture || nonggk}
                       alt={student.student_name}
                       className="student-image"
                     />

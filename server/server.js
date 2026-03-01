@@ -1078,6 +1078,21 @@ app.get("/api/getDetailPayment", async (req, res) => {
   }
 });
 
+app.get("/api/income/statistics/:tutorId", async (req, res) => {
+  try {
+    const { tutorId } = req.params;
+
+    const { data, error } = await supabase.rpc("get_income_statistics", {
+      p_tutor_id: tutorId,
+    });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

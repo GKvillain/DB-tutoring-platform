@@ -9,6 +9,7 @@ import { Summary } from "./pages/Summary";
 import { Login } from "./pages/Login";
 import Register from "./pages/Register";
 import TutorHome from "./pages/TutorHome";
+import { FinanceReport } from "./pages/FinanceReport";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/Login" element={<Login />} />
       <Route path="/Register" element={<Register />} />
       <Route path="/TutorHome" element={<TutorHome />} />
+      <Route path="/finance/reports" element={<FinanceReport />} />
     </Routes>
   );
 }
