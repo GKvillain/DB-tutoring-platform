@@ -34,7 +34,6 @@ export function FinanceReport() {
       try {
         setLoading(true);
 
-        // 1️⃣ Get tutor ID
         const accRes = await fetch(
           `http://localhost:3000/api/getTutorId?account_id=${accountId}`,
         );
@@ -46,9 +45,8 @@ export function FinanceReport() {
         const tutorData = await accRes.json();
         const tutor_id = tutorData.tutor_id;
 
-        // 2️⃣ Fetch income statistics
         const statRes = await fetch(
-          `http://localhost:3000/api/income/statistics/${tutor_id}`,
+          `http://localhost:3000/api/income-finance/statistics/${tutor_id}`,
         );
 
         if (!statRes.ok) {
@@ -57,9 +55,8 @@ export function FinanceReport() {
 
         const statData = await statRes.json();
 
-        console.log("Raw data from API:", statData); // จะเห็นเป็น array
+        console.log("Raw data from API:", statData);
 
-        // 🔥 แปลงจาก array เป็น object
         const formattedStats = {
           today: 0,
           week: 0,
@@ -139,7 +136,6 @@ export function FinanceReport() {
         <h1 className="finance-title">รายงานการเงิน</h1>
 
         <div className="stats-grid">
-          {/* รายรับวันนี้ */}
           <div className="stat-card">
             <div className="stat-icon">
               <Calendar size={32} color="#a084dc" />
@@ -152,7 +148,6 @@ export function FinanceReport() {
             </div>
           </div>
 
-          {/* รายรับสัปดาห์นี้ */}
           <div className="stat-card">
             <div className="stat-icon">
               <CalendarDays size={32} color="#a084dc" />
@@ -165,7 +160,6 @@ export function FinanceReport() {
             </div>
           </div>
 
-          {/* รายรับเดือนนี้ */}
           <div className="stat-card">
             <div className="stat-icon">
               <BarChart3 size={32} color="#a084dc" />
@@ -178,7 +172,6 @@ export function FinanceReport() {
             </div>
           </div>
 
-          {/* รายรับปีนี้ */}
           <div className="stat-card">
             <div className="stat-icon">
               <TrendingUp size={32} color="#a084dc" />
@@ -191,7 +184,6 @@ export function FinanceReport() {
             </div>
           </div>
 
-          {/* รายรับทั้งหมด */}
           <div className="stat-card">
             <div className="stat-icon">
               <Wallet size={32} color="#a084dc" />
@@ -204,7 +196,6 @@ export function FinanceReport() {
             </div>
           </div>
 
-          {/* รอการชำระเงิน */}
           <div className="stat-card">
             <div className="stat-icon">
               <Clock size={32} color="#ff6b6b" />

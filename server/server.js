@@ -1078,7 +1078,7 @@ app.get("/api/getDetailPayment", async (req, res) => {
   }
 });
 
-app.get("/api/income/statistics/:tutorId", async (req, res) => {
+app.get("/api/income-finance/statistics/:tutorId", async (req, res) => {
   try {
     const { tutorId } = req.params;
 
