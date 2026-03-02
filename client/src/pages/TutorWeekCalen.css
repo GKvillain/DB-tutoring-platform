@@ -1,0 +1,146 @@
+
+body {
+  background-color: #F1F0FF; 
+  margin: 0;
+  padding: 0;
+}
+
+.container-calen {
+  width: 95%;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  color: #A084DC;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+
+.table-wrapper {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1); 
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #EBC7E6;
+}
+
+
+th {
+  background-color: #A084DC;
+  color: white;
+  padding: 15px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+tbody td:first-child {
+  font-weight: bold;
+  background-color: #F1F0FF;
+  color: #A084DC;
+  width: 100px;
+}
+
+td {
+  border: 1px solid #EBC7E6; 
+  text-align: center;
+  min-width: 120px;
+}
+
+
+.slot-td {
+  padding: 0 !important;
+  height: 85px;
+  position: relative;
+}
+
+
+.sub-slot-row-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.sub-slot-vertical {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  border-right: 1px solid rgba(235, 199, 230, 0.5);
+}
+
+.sub-slot-vertical:last-child {
+  border-right: none;
+}
+
+
+.has-lesson {
+  background-color: #EBC7E6; 
+  transition: background-color 0.3s ease;
+}
+
+.has-lesson:hover {
+  background-color: #dfb3da;
+}
+
+
+.vertical-lesson-content {
+  position: absolute;
+  top: 50%;
+  left: 8px; 
+  transform: translateY(-50%);
+  width: 280%; 
+  z-index: 10;
+  color: #4A4A4A;
+  font-size: 12px;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  
+  align-items: flex-start !important; 
+  text-align: left !important; 
+  line-height: 1.2;
+}
+
+.vertical-lesson-content .desc {
+  font-weight: bold;
+  color: #8369b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+font-size: 1rem;
+  width: 100%;
+  text-align: left; 
+}
+
+.vertical-lesson-content .nick {
+  font-size: 1rem;
+  color: #666;
+  text-align: left; 
+  margin-top: 2px;
+}
+.table-wrapper{
+    width: 90%;
+    margin: auto;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #EBC7E6;
+  border-radius: 10px;
+}
