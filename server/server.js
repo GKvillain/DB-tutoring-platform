@@ -468,6 +468,45 @@ app.put("/api/updateNote", async (req, res) => {
   res.json({ success: true, data });
 });
 
+app.get("/api/TutorWeekCalen", async (req, res) => {
+  const { tutor_id } = req.query;
+
+  if (!tutor_id) return res.status(400).json({ error: "tutor_id is required" });
+  const today = new Date();
+  const first = today.getDate() - today.getDay();
+  const last = first + 6;
+  const firstDay = new Date(new Date().setDate(first))
+    .toISOString()
+    .split("T")[0];
+
+  const lastDay = new Date(new Date().setDate(last))
+    .toISOString()
+    .split("T")[0];
+
+  try {
+    const { data, error } = await supabase
+  .from("classsession")
+  .select(`
+    session_id,
+    session_date,
+    description,
+    enrollment (
+      enrollment_id,
+      student ( student_nickname ),
+      enrollmentschedule ( start_time, end_time, day_of_week )
+    )
+  `)
+  .eq("tutor_id", tutor_id)
+  .gte("session_date", firstDay)
+  .lte("session_date", lastDay);
+    if (error) throw error;
+
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // app.get("/api/paymentStatus", async (req, res) => {
 //   try {
 //     const { month, year, current_tutor_id } = req.query;
