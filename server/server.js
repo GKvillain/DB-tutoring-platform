@@ -1,18 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import { createClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
-
-dotenv.config();
+import supabase from "./config/supabaseClient.js";
+import statRoutes from "./routes/statRoutes.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+app.use("/api/dashboard", statRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running!" });
@@ -61,98 +59,40 @@ app.get("/api/test", async (req, res) => {
   res.json(data);
 });
 
-app.get("/api/statistics", async (req, res) => {
-  try {
-    const { month, year } = req.query;
+// app.get("/api/statistics", async (req, res) => {
+//   try {
+//     const { month, year } = req.query;
 
-    const { data, error } = await supabase.rpc("get_statistics", {
-      p_month: month,
-      p_year: year,
-    });
+//     const { data, error } = await supabase.rpc("get_statistics", {
+//       p_month: month,
+//       p_year: year,
+//     });
 
-    if (error) throw error;
+//     if (error) throw error;
 
-    res.json(data[0]);
-  } catch (err) {
-    console.error("RPC Error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
+//     res.json(data[0]);
+//   } catch (err) {
+//     console.error("RPC Error:", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
-app.get("/api/statisticsCourse", async (req, res) => {
-  try {
-    const { month, year } = req.query;
+// app.get("/api/statisticsCourse", async (req, res) => {
+//   try {
+//     const { month, year } = req.query;
 
-    const { data, error } = await supabase.rpc("get_course_statistics", {
-      p_month: month,
-      p_year: year,
-    });
+//     const { data, error } = await supabase.rpc("get_course_statistics", {
+//       p_month: month,
+//       p_year: year,
+//     });
 
-    if (error) throw error;
-    res.json(data);
-  } catch (err) {
-    console.error("RPC Error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get("/api/dashboard", async (req, res) => {
-  try {
-    const { month, year, tutor_id } = req.query;
-
-    if (!month || !year || !tutor_id) {
-      return res.status(400).json({
-        error: "Month, year, and tutor_id are required",
-      });
-    }
-
-    const monthNum = parseInt(month);
-    const yearNum = parseInt(year);
-
-    const [hoursRes, studentsRes, sessionsRes, incomeRes] = await Promise.all([
-      supabase.rpc("get_total_hours_month_year", {
-        p_month: monthNum,
-        p_year: yearNum,
-        p_tutor_id: tutor_id,
-      }),
-      supabase.rpc("get_student_count", {
-        p_month: monthNum,
-        p_year: yearNum,
-        p_tutor_id: tutor_id,
-      }),
-      supabase.rpc("get_total_sessions", {
-        p_month: monthNum,
-        p_year: yearNum,
-        p_tutor_id: tutor_id,
-      }),
-      supabase.rpc("get_total_income", {
-        p_month: monthNum,
-        p_year: yearNum,
-        p_tutor_id: tutor_id,
-      }),
-    ]);
-
-    if (hoursRes.error) throw hoursRes.error;
-    if (studentsRes.error) throw studentsRes.error;
-    if (sessionsRes.error) throw sessionsRes.error;
-    if (incomeRes.error) throw incomeRes.error;
-
-    res.json({
-      total_hours: hoursRes.data || 0,
-      total_students: studentsRes.data || 0,
-      total_sessions: sessionsRes.data || 0,
-      total_income: incomeRes.data || 0,
-      month: monthNum,
-      year: yearNum,
-    });
-  } catch (err) {
-    console.error("Dashboard API error:", err);
-    res.status(500).json({
-      error: err.message,
-      details: "Failed to fetch dashboard statistics",
-    });
-  }
-});
+//     if (error) throw error;
+//     res.json(data);
+//   } catch (err) {
+//     console.error("RPC Error:", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 app.get("/api/getCourseSummary", async (req, res) => {
   try {
