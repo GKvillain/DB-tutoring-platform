@@ -9,6 +9,7 @@ import { Login } from "./pages/Login";
 import Register from "./pages/Register";
 import TutorHome from "./pages/TutorHome";
 import { FinanceReport } from "./pages/FinanceReport";
+import TutorWeekCalen from "./pages/TutorWeekCalen";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/Register" element={<Register />} />
       <Route path="/TutorHome" element={<TutorHome />} />
       <Route path="/finance/reports" element={<FinanceReport />} />
+        <Route path="/TutorWeekCalen" element={<TutorWeekCalen />} />
     </Routes>
   );
 }
