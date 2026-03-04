@@ -1,171 +1,557 @@
+/* TutorWeekCalen.css */
+
 body {
-    background-color: #F1F0FF;
-    margin: 0;
-    padding: 0;
+  background-color: #F1F0FF;
+  margin: 0;
+  padding: 0;
+  font-family: 'Sarabun', sans-serif;
 }
 
 .container-calen {
-    width: 95%;
-    margin: 40px auto;
-    text-align: center;
+  max-width: 1600px;  /* เพิ่มจาก 1400px */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header Section */
+.schedule-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .title {
-    font-size: 32px;
-    color: #A084DC;
-    margin-bottom: 25px;
-    font-weight: bold;
+  font-size: 2.5rem;  /* เพิ่มจาก 2rem */
+  color: #A084DC;
+  margin: 0;
+  font-weight: 600;
 }
 
-
-.table-wrapper {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1);
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background-color: white;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #EBC7E6;
-}
-
-
-th {
-    background-color: #A084DC;
-    color: white;
-    padding: 15px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-
-tbody td:first-child {
-    font-weight: bold;
-    background-color: #F1F0FF;
-    color: #A084DC;
-    width: 100px;
-}
-
-td {
-    border: 1px solid #EBC7E6;
-    text-align: center;
-    min-width: 120px;
-}
-
-
-.slot-td {
-    padding: 0 !important;
-    height: 85px;
-    position: relative;
-}
-
-
-.sub-slot-row-wrapper {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-    width: 100%;
-}
-
-.sub-slot-vertical {
-    flex: 1;
-    position: relative;
-    min-width: 0;
-    border-right: 1px solid rgba(235, 199, 230, 0.5);
-}
-
-.sub-slot-vertical:last-child {
-    border-right: none;
-}
-
-
-.has-lesson {
-    background-color: #EBC7E6;
-    transition: background-color 0.3s ease;
-}
-
-.has-lesson:hover {
-    background-color: #dfb3da;
-}
-
-
-.vertical-lesson-content {
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    width: 280%;
-    z-index: 10;
-    color: #4A4A4A;
-    font-size: 12px;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-
-    align-items: flex-start !important;
-    text-align: left !important;
-    line-height: 1.2;
-}
-
-.vertical-lesson-content .desc {
-    font-weight: bold;
-    color: #8369b8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 1rem;
-    width: 100%;
-    text-align: left;
-}
-
-.vertical-lesson-content .nick {
-    font-size: 1rem;
-    color: #666;
-    text-align: left;
-    margin-top: 2px;
-}
-
-.table-wrapper {
-    width: 90%;
-    margin: auto;
-}
-
-.table-wrapper::-webkit-scrollbar {
-    height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: #EBC7E6;
-    border-radius: 10px;
+.dropdown-wrapper {
+  min-width: 220px;  /* เพิ่มจาก 200px */
 }
 
 .view-selector {
-
-    appearance: none;
-    background-color: #ffffff;
-    border: none;
-    border-radius: 25px;
-    padding: 8px 40px 8px 20px;
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 14px;
-    outline: none;
-    transition: background-color 0.2s ease;
-    min-width: 140px;
-    text-align: left;
+  width: 100%;
+  padding: 12px 18px;  /* เพิ่ม padding */
+  border: 2px solid #EBC7E6;
+  border-radius: 8px;
+  font-size: 1.1rem;  /* เพิ่มจาก 1rem */
+  color: #4A4A4A;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Sarabun', sans-serif;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23A084DC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
 }
 
+.view-selector:hover {
+  border-color: #A084DC;
+}
+
+.view-selector:focus {
+  outline: none;
+  border-color: #A084DC;
+  box-shadow: 0 0 0 3px rgba(160, 132, 220, 0.2);
+}
+
+/* Date Display */
 .date-display {
-    margin: 1rem 0rem;
+  font-size: 1.2rem;  /* เพิ่มจาก 1.1rem */
+  color: #666;
+  margin-bottom: 20px;
+  padding: 12px 18px;  /* เพิ่ม padding */
+  background-color: #ffffff;
+  border-radius: 8px;
+  border-left: 4px solid #A084DC;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1);
+}
+
+.date-display strong {
+  color: #A084DC;
+  font-size: 1.2rem;  /* เพิ่มขนาด */
+}
+
+/* Table Styles */
+.table-wrapper {
+  background: #ffffff;
+  padding: 20px;  /* เพิ่มจาก 15px */
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1);
+  overflow-x: auto;
+  border: 1px solid #EBC7E6;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 10px;  /* เพิ่มจาก 8px */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #EBC7E6;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #A084DC;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 1200px;  /* เพิ่มจาก 1000px */
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #EBC7E6;  /* เพิ่มความหนา */
+}
+
+.calendar-table th {
+  background-color: #A084DC;
+  color: #ffffff;
+  padding: 18px 12px;  /* เพิ่มจาก 15px 10px */
+  font-weight: 600;  /* เพิ่มจาก 500 */
+  font-size: 1.1rem;  /* เพิ่มจาก 0.95rem */
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+}
+
+.calendar-table td {
+  border: 1px solid #EBC7E6;
+  padding: 0;
+  vertical-align: top;
+}
+
+/* Sticky Column */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background-color: #F1F0FF;
+  z-index: 10;
+  border-right: 2px solid #EBC7E6 !important;
+  font-weight: 600;
+  color: #A084DC;
+}
+
+.day-label {
+  background-color: #F1F0FF;
+  font-weight: 600;
+  text-align: center;
+  padding: 18px 12px !important;  /* เพิ่มจาก 15px 10px */
+  min-width: 120px;  /* เพิ่มจาก 100px */
+  color: #A084DC;
+  font-size: 1.1rem;  /* เพิ่มขนาด */
+}
+
+/* Slot Styles */
+.slot-td {
+  padding: 0 !important;
+  height: 100px;  /* เพิ่มจาก 85px */
+  position: relative;
+}
+
+.slot-td.has-lesson {
+  background-color: #A084DC;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slot-td.has-lesson:hover {
+  background-color: #8a6fc9;  /* ปรับสีให้เข้ากับ #A084DC */
+}
+
+/* Lesson Block */
+.lesson-block {
+  padding: 10px;  /* เพิ่มจาก 8px */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;  /* เพิ่มจาก 4px */
+  background-color: inherit;
+  /* height: 100%; */
+}
+
+.course-name {
+  font-weight: bold;
+  color: #f3ce53;
+  font-size: 1rem;  /* เพิ่มจาก 0.9rem */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.student-name {
+  color: #ffffff;  /* เปลี่ยนเป็นสีขาวเพื่อให้เห็นชัด */
+  font-size: 0.9rem;  /* เพิ่มจาก 0.8rem */
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.lesson-time {
+  color: #F1F0FF !important;
+  font-size: 0.8rem;  /* เพิ่มจาก 0.7rem */
+  display: block;
+}
+
+/* Monthly View Styles */
+.monthly-view {
+  margin-top: 20px;
+}
+
+.month-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;  /* เพิ่มจาก 20px */
+  margin-bottom: 5px;  /* เพิ่มจาก 20px */
+}
+
+.month-nav-btn {
+  width: 45px;  /* เพิ่มจาก 40px */
+  height: 45px;  /* เพิ่มจาก 40px */
+  border: 2px solid #EBC7E6;
+  background: #ffffff;
+  border-radius: 50%;
+  font-size: 22px;  /* เพิ่มจาก 20px */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #A084DC;
+}
+
+.month-nav-btn:hover {
+  background: #F1F0FF;
+  border-color: #A084DC;
+  transform: scale(1.05);
+}
+
+.month-title {
+  font-size: 1.8rem;  /* เพิ่มจาก 1.5rem */
+  margin: 0;
+  color: #A084DC;
+}
+
+.month-grid {
+  border: 2px solid #EBC7E6;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1);
+}
+
+.month-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #F1F0FF;
+  border-bottom: 2px solid #EBC7E6;
+}
+
+.month-weekday {
+  padding: 15px;  /* เพิ่มจาก 12px */
+  text-align: center;
+  font-weight: bold;
+  color: #A084DC;
+  border-right: 1px solid #EBC7E6;
+  font-size: 1.1rem;  /* เพิ่มจาก 0.95rem */
+}
+
+.month-weekday:last-child {
+  border-right: none;
+}
+
+.month-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* เพิ่มขนาด month-day */
+.month-day {
+  min-height: 135px;  
+  max-height: 80px; 
+  padding: 8px;  /* เพิ่มจาก 6px */
+  border-right: 1px solid #EBC7E6;
+  border-bottom: 1px solid #EBC7E6;
+  background: #ffffff;
+  transition: background-color 0.2s ease;
+  overflow-y: auto;
+}
+
+/* ซ่อน scrollbar แต่ยังเลื่อนได้ */
+.month-day::-webkit-scrollbar {
+  width: 4px;  /* เพิ่มจาก 3px */
+}
+
+.month-day::-webkit-scrollbar-thumb {
+  background: #EBC7E6;
+  border-radius: 3px;
+}
+
+.month-day:hover {
+  background-color: #F1F0FF;
+}
+
+.month-day:nth-child(7n) {
+  border-right: none;
+}
+
+.month-day.today {
+  background-color: #F1F0FF;
+  border: 2px solid #A084DC;
+}
+
+/* เพิ่มขนาด month-day-number */
+.month-day-number {
+  font-size: 1rem;  /* เพิ่มจาก 0.85rem */
+  color: #A084DC;
+  margin-bottom: 6px;  /* เพิ่มจาก 4px */
+  font-weight: 600;
+}
+
+/* เพิ่มขนาดและปรับระยะห่างของ lessons */
+.month-day-lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;  /* เพิ่มจาก 2px */
+}
+
+/* เพิ่มขนาด month-lesson-item */
+.month-lesson-item {
+  background: #A084DC;
+  padding: 4px 6px;  /* เพิ่มจาก 3px 5px */
+  border-radius: 4px;
+  font-size: 10px;  /* เพิ่มจาก 9px */
+  line-height: 1.3;  /* เพิ่มจาก 1.2 */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  border-left: 2px solid #A084DC;
+}
+
+.month-course-name {
+  font-weight: bold;
+  color: #f3ce53;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;  /* เพิ่มจาก 9px */
+}
+
+.month-student-name {
+  color: #ffffff;  /* เปลี่ยนเป็นสีขาว */
+  font-size: 9px;  /* เพิ่มจาก 8px */
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.month-lesson-time {
+  color: #F1F0FF;
+  font-size: 8px;  /* เพิ่มจาก 7px */
+  display: block;
+}
+
+/* Loading and Error States */
+.loading, .error, .no-data-info {
+  text-align: center;
+  padding: 50px;  /* เพิ่มจาก 40px */
+  font-size: 1.3rem;  /* เพิ่มจาก 1.2rem */
+  color: #666;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(160, 132, 220, 0.1);
+  margin: 20px 0;
+}
+
+.error {
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.no-data-info {
+  color: #999;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .container-calen {
+    padding: 15px;
+  }
+  
+  .calendar-table {
+    min-width: 1000px;  /* เพิ่มจาก 900px */
+  }
+  
+  .month-day {
+    min-height: 95px;  /* เพิ่มจาก 80px */
+    max-height: 115px;  /* เพิ่มจาก 100px */
+    padding: 6px;  /* เพิ่มจาก 5px */
+  }
+}
+
+@media (max-width: 992px) {
+  .title {
+    font-size: 2rem;  /* เพิ่มจาก 1.8rem */
+  }
+  
+  .view-selector {
+    min-width: 200px;  /* เพิ่มจาก 180px */
+  }
+  
+  .month-day {
+    min-height: 85px;  /* เพิ่มจาก 75px */
+    max-height: 105px;  /* เพิ่มจาก 90px */
+    padding: 5px;  /* เพิ่มจาก 4px */
+  }
+  
+  .month-weekday {
+    padding: 12px;  /* เพิ่มจาก 10px */
+    font-size: 1rem;  /* เพิ่มจาก 0.9rem */
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-header-flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .title {
+    font-size: 1.8rem;  /* เพิ่มจาก 1.5rem */
+    text-align: center;
+  }
+
+  .dropdown-wrapper {
+    width: 100%;
+  }
+
+  .month-header {
+    flex-wrap: wrap;
+  }
+
+  .month-title {
+    font-size: 1.4rem;  /* เพิ่มจาก 1.2rem */
+    text-align: center;
+  }
+
+  .month-nav-btn {
+    width: 40px;  /* เพิ่มจาก 35px */
+    height: 40px;  /* เพิ่มจาก 35px */
+    font-size: 20px;  /* เพิ่มจาก 18px */
+  }
+
+  .month-day {
+    min-height: 80px;  /* เพิ่มจาก 70px */
+    max-height: 80px;  /* เพิ่มจาก 85px */
+    padding: 4px;  /* เพิ่มจาก 3px */
+  }
+  
+  .month-day-number {
+    font-size: 0.85rem;  /* เพิ่มจาก 0.75rem */
+    margin-bottom: 3px;  /* เพิ่มจาก 2px */
+  }
+  
+  .month-weekday {
+    padding: 10px 6px;  /* เพิ่มจาก 8px 5px */
+    font-size: 0.9rem;  /* เพิ่มจาก 0.8rem */
+  }
+  
+  .month-lesson-item {
+    padding: 3px 4px;  /* เพิ่มจาก 2px 3px */
+    font-size: 9px;  /* เพิ่มจาก 8px */
+  }
+  
+  .month-course-name {
+    font-size: 9px;  /* เพิ่มจาก 8px */
+  }
+  
+  .month-student-name {
+    font-size: 8px;  /* เพิ่มจาก 7px */
+  }
+  
+  .month-lesson-time {
+    font-size: 7px;  /* เพิ่มจาก 6px */
+  }
+  
+  .day-label {
+    min-width: 80px;  /* เพิ่มจาก 70px */
+    padding: 12px 6px !important;  /* เพิ่มจาก 10px 5px */
+  }
+}
+
+@media (max-width: 480px) {
+  .container-calen {
+    padding: 10px;
+  }
+  
+  .date-display {
+    font-size: 1rem;  /* เพิ่มจาก 0.9rem */
+    padding: 10px 14px;  /* เพิ่มจาก 8px 12px */
+  }
+  
+  .month-day {
+    min-height: 75px;  /* เพิ่มจาก 65px */
+    max-height: 80px;  /* เพิ่มจาก 80px */
+    padding: 3px;  /* เพิ่มจาก 2px */
+  }
+  
+  .month-day-number {
+    font-size: 0.8rem;  /* เพิ่มจาก 0.7rem */
+  }
+}
+
+/* Print Styles */
+@media print {
+  .dropdown-wrapper,
+  .month-nav-btn,
+  .view-selector {
+    display: none;
+  }
+
+  .calendar-table th {
+    background-color: #F1F0FF !important;
+    color: #4A4A4A;
+  }
+
+  .has-lesson {
+    background-color: #F1F0FF!important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .month-day.today {
+    border: 2px solid #000;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.monthly-view,
+.table-wrapper {
+  animation: fadeIn 0.5s ease-out;
 }
