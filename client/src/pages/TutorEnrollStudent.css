@@ -1,0 +1,419 @@
+/* ครอบทั้งหน้า */
+.page-center {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+}
+
+/* กล่องฟอร์ม */
+.form-container {
+    width: 60%;
+    max-width: 100%;
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* จัดหัวข้อให้อยู่กลาง */
+.topic.center {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* ฟอร์ม */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sectionTopic {
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #000000;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* ===== FIELD STYLES ===== */
+.field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0.5rem;
+}
+
+.field label {
+    font-size: 0.875rem;
+    margin: 0 0 0.25rem 0;
+    line-height: 1.4;
+}
+
+/* input ทั่วไป */
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #A084DC;
+    background: #ffffff;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.field textarea {
+    min-height: 5rem;
+    resize: vertical;
+}
+
+/* Container สำหรับฟิลด์ที่มีปุ่มเคลียร์ */
+.field .input-wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.field .input-wrapper input {
+    width: 100%;
+    margin: 0;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    border: 1px solid #A084DC;
+    border-radius: 0.5rem;
+}
+
+.field .input-wrapper .clear-btn {
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0.5rem;
+    height: fit-content;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+}
+
+.field .input-wrapper .clear-btn:hover {
+    color: #ff4444;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.required {
+    color: red;
+    margin-left: 2px;
+}
+
+.optional {
+    color: #999;
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-left: 4px;
+}
+
+.error {
+    border-color: red !important;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ===== IMAGE UPLOAD ===== */
+/* รูปภาพนักเรียน - วงกลม */
+.imgUpload.person {
+    width: 140px;
+    height: 140px;
+    border: 2px dashed #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.imgUpload.person img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.imgUpload.person span {
+    font-size: 3rem;
+    color: #aaa;
+}
+
+.imgUpload.person.has-image {
+    border: none;
+}
+
+/* รูปภาพทั่วไป (รวมถึงรูปหนังสือ) - สี่เหลี่ยม */
+.imgUpload:not(.person) {
+    width: 140px;
+    height: 140px;
+    border: 2px dashed #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.imgUpload:not(.person) img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.imgUpload:not(.person) span {
+    font-size: 3rem;
+    color: #aaa;
+}
+
+.imgUpload:not(.person).has-image {
+    border: none;
+}
+
+/* จัดรูป upload ให้อยู่กลาง */
+.imgUploadWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* ข้อความใต้รูป */
+.imgCaption {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* ===== ACCOUNT TYPE RADIO ===== */
+.account-type-row {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+}
+
+.account-type-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+.account-type-label input[type="radio"] {
+    width: auto;
+    margin: 0;
+    accent-color: #A084DC;
+}
+
+.account-type-label:hover {
+    background-color: #e8e8e8;
+}
+
+.account-type-label.selected {
+    background-color: #A084DC;
+    color: white;
+}
+
+.account-type-label.selected input[type="radio"] {
+    accent-color: white;
+}
+
+/* ===== CREATABLE SELECT ===== */
+.field .creatable-select-container {
+    width: 100%;
+    margin-top: 0;
+}
+
+.field .creatable-select__control {
+    border: 1px solid #A084DC !important;
+    border-radius: 0.5rem !important;
+    min-height: 38px;
+    box-shadow: none !important;
+    background: #ffffff;
+}
+
+.field .creatable-select__control:hover {
+    border-color: #A084DC !important;
+}
+
+.field .creatable-select__control--is-focused {
+    border-color: #A084DC !important;
+    box-shadow: 0 0 0 1px #A084DC !important;
+}
+
+.field .creatable-select__value-container {
+    padding: 0 0.5rem;
+}
+
+.field .creatable-select__input-container {
+    margin: 0;
+    padding: 0;
+}
+
+.field .creatable-select__placeholder {
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.field .creatable-select__single-value {
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.field .creatable-select__indicator {
+    padding: 0 0.5rem;
+    color: #A084DC;
+}
+
+.field .creatable-select__indicator-separator {
+    display: none;
+}
+
+.field .creatable-select__menu {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.field .creatable-select__option {
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+}
+
+.field .creatable-select__option--is-focused {
+    background-color: #f0e8ff;
+}
+
+.field .creatable-select__option--is-selected {
+    background-color: #A084DC;
+}
+
+/* ===== WEEKDAY SELECTOR ===== */
+.weekday-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.weekday-buttons button {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    border: none;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.weekday-buttons button:hover {
+    background: #ccc;
+}
+
+.weekday-buttons button.active {
+    background: #b388ff;
+    color: white;
+}
+
+.time-picker {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.time-picker input[type="time"] {
+    width: auto;
+    margin: 0;
+}
+
+/* ===== MARGIN UTILITIES ===== */
+.row.contact {
+    margin-left: 0;
+}
+
+/* ===== BUTTONS ===== */
+.submit-btn {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 0.75rem 3rem;
+    border-radius: 2rem;
+    border: none;
+    background: #b388ff;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: #9f7aea;
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .account-type-row {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .row {
+        flex-direction: column;
+    }
+    
+    .weekday-buttons {
+        flex-wrap: wrap;
+    }
+}
+
+.availability-error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 15px;
+    font-size: 14px;
+    white-space: pre-line;
+    line-height: 1.6;
+}

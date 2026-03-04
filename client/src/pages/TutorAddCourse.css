@@ -1,0 +1,16 @@
+/* สืบทอดจาก TutorEnrollStudent.css */
+@import "./TutorEnrollStudent.css";
+
+
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ระยะห่างสำหรับ textarea */
+.field.full textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}

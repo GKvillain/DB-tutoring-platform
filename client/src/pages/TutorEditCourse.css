@@ -1,0 +1,57 @@
+/* ===== BUTTON GROUP ===== */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.button-group button {
+    min-width: 150px;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border: none;
+    box-sizing: border-box;
+}
+
+/* ปุ่มยกเลิก - สีม่วงอ่อน */
+.cancel-btn {
+    background: #f0e8ff;
+    color: #A084DC;
+    border: 1px solid #A084DC;
+}
+
+.cancel-btn:hover {
+    background: #e1d5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(160, 132, 220, 0.2);
+}
+
+/* ปุ่มบันทึก - ใช้สีเดียวกับ .submit-btn ที่มีอยู่แล้ว */
+.submit-btn {
+    background: #b388ff;
+    color: white;
+    margin: 0;
+    border: 1px solid #b388ff;
+    /* เพิ่ม border ให้เท่ากับปุ่มยกเลิก */
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: #9f7aea;
+    border-color: #9f7aea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(160, 132, 220, 0.3);
+}
+
+.submit-btn:disabled {
+    background: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
