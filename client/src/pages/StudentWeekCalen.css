@@ -1,0 +1,468 @@
+/* StudentWeekCalen.css */
+
+.schedule-page {
+  margin-left: 70px;
+  padding: 30px;
+  min-height: 100vh;
+  background-color: #F1F0FF;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: white;
+  padding: 20px 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.1);
+  border: 1px solid #EBC7E6;
+}
+
+.page-title {
+  font-size: 24px;
+  color: #A084DC;
+  margin: 0;
+}
+
+.student-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.student-selector label {
+  font-weight: 600;
+  color: #A084DC;
+}
+
+.student-select {
+  padding: 10px 20px;
+  border: 2px solid #EBC7E6;
+  border-radius: 30px;
+  font-size: 14px;
+  min-width: 250px;
+  background-color: white;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.student-select:hover {
+  border-color: #A084DC;
+}
+
+.student-select:focus {
+  outline: none;
+  border-color: #A084DC;
+  box-shadow: 0 0 0 3px rgba(160, 132, 220, 0.1);
+}
+
+.student-info {
+  background: #F1F0FF;
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #EBC7E6;
+}
+
+.student-info p {
+  margin: 0;
+  color: #333;
+}
+
+.student-info strong {
+  color: #A084DC;
+  font-weight: 600;
+}
+
+.week-info {
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.week-info p {
+  display: inline-block;
+  background: white;
+  padding: 8px 20px;
+  border-radius: 30px;
+  color: #A084DC;
+  font-weight: 500;
+  border: 1px solid #EBC7E6;
+  margin: 0;
+}
+
+.table-wrapper {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.1);
+  border: 1px solid #EBC7E6;
+  overflow-x: auto;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.schedule-table th {
+  background: #F1F0FF;
+  color: #A084DC;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 15px 10px;
+  text-align: center;
+  border: 1px solid #EBC7E6;
+  white-space: nowrap;
+}
+
+.schedule-table td {
+  border: 1px solid #EBC7E6;
+  padding: 0;
+  height: 100px;
+  vertical-align: top;
+}
+
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: #F1F0FF;
+  z-index: 10;
+  font-weight: 600;
+  color: #A084DC;
+  min-width: 100px;
+}
+
+.day-label {
+  background: #F1F0FF !important;
+  font-weight: 600;
+  color: #A084DC;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0 10px !important;
+}
+
+.slot-td.has-lesson {
+  background: #F1F0FF;
+  padding: 0;
+  position: relative;
+}
+
+.slot-td.has-lesson:hover {
+  background: #EBC7E6;
+}
+
+.lesson-block {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+  text-align: center;
+  border-left: 4px solid #A084DC;
+}
+
+.course-name {
+  font-weight: 600;
+  color: #A084DC;
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.lesson-time {
+  font-size: 12px;
+  color: #666;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #A084DC;
+  font-size: 16px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #EBC7E6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed #EBC7E6;
+}
+
+.empty-state p {
+  color: #A084DC;
+  font-size: 16px;
+  margin: 0;
+}
+
+.no-sessions {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #EBC7E6;
+  margin-top: 20px;
+}
+
+.no-sessions p {
+  color: #A084DC;
+  font-size: 15px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .schedule-page {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .schedule-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .student-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .student-select {
+    width: 100%;
+  }
+
+  .week-info {
+    text-align: center;
+  }
+}
+
+/* เพิ่มใน StudentWeekCalen.css */
+
+.header-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.view-selector {
+  display: flex;
+  align-items: center;
+}
+
+.view-select {
+  padding: 10px 20px;
+  border: 2px solid #EBC7E6;
+  border-radius: 30px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.view-select:hover {
+  border-color: #A084DC;
+}
+
+.view-select:focus {
+  outline: none;
+  border-color: #A084DC;
+  box-shadow: 0 0 0 3px rgba(160, 132, 220, 0.1);
+}
+
+/* Monthly View */
+.monthly-view {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.1);
+  border: 1px solid #EBC7E6;
+}
+
+.month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.month-title {
+  font-size: 20px;
+  color: #A084DC;
+  margin: 0;
+}
+
+.month-nav-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #EBC7E6;
+  border-radius: 50%;
+  background: white;
+  color: #A084DC;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.month-nav-btn:hover {
+  background: #F1F0FF;
+  border-color: #A084DC;
+}
+
+.month-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.month-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #F1F0FF;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #EBC7E6;
+  border-bottom: none;
+}
+
+.month-weekday {
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #A084DC;
+  font-size: 14px;
+  border-right: 1px solid #EBC7E6;
+}
+
+.month-weekday:last-child {
+  border-right: none;
+}
+
+.month-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border: 1px solid #EBC7E6;
+  border-top: none;
+  min-height: 600px;
+}
+
+.month-day {
+  border-right: 1px solid #EBC7E6;
+  border-bottom: 1px solid #EBC7E6;
+  padding: 10px;
+  min-height: 100px;
+  background: white;
+}
+
+.month-day:nth-child(7n) {
+  border-right: none;
+}
+
+.month-day.today {
+  background: #F1F0FF;
+  border: 2px solid #A084DC;
+}
+
+.month-day-number {
+  font-weight: 600;
+  color: #A084DC;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.month-day-lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+.month-day-lessons::-webkit-scrollbar {
+  width: 3px;
+}
+
+.month-day-lessons::-webkit-scrollbar-track {
+  background: #F1F0FF;
+  border-radius: 3px;
+}
+
+.month-day-lessons::-webkit-scrollbar-thumb {
+  background: #A084DC;
+  border-radius: 3px;
+}
+
+.month-lesson-item {
+  background: #F1F0FF;
+  border-left: 3px solid #A084DC;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 11px;
+}
+
+.month-course-name {
+  font-weight: 600;
+  color: #A084DC;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.month-lesson-time {
+  font-size: 9px;
+  color: #666;
+  display: block;
+  margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .header-controls {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .student-selector,
+  .view-selector {
+    width: 100%;
+  }
+
+  .student-select,
+  .view-select {
+    width: 100%;
+  }
+
+  .month-weekday {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .month-day {
+    padding: 5px;
+    min-height: 70px;
+  }
+
+  .month-day-number {
+    font-size: 12px;
+  }
+}

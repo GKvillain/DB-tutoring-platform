@@ -9,6 +9,9 @@
 
 * {
   font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* Sidebar */
@@ -17,7 +20,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 80px; /* default collapsed */
+  width: 80px;
   backdrop-filter: blur(20px);
   background: rgba(255, 255, 255, 0.85);
   border-right: 1px solid rgba(0, 0, 0, 0.05);
@@ -28,16 +31,12 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.sidebar.expanded {
+.sidebar.sidebar-expanded {
   width: 260px;
 }
 
-.sidebar.collapsed {
+.sidebar.sidebar-collapsed {
   width: 80px;
-}
-
-.sidebar.expanded {
-  width: 260px;
 }
 
 /* Header */
@@ -49,6 +48,10 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.logo-icon {
+  color: var(--primary);
 }
 
 .brand-text {
@@ -73,10 +76,24 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
+}
+
+.section-icon {
+  color: var(--text-light);
+  min-width: 18px;
+}
+
+.section-text {
   font-size: 0.75rem;
   text-transform: uppercase;
   color: var(--text-light);
   letter-spacing: 1px;
+  font-weight: 500;
+}
+
+/* เมื่อ sidebar หุบ ให้ซ่อน section-text */
+.sidebar.sidebar-collapsed .section-text {
+  display: none;
 }
 
 /* Links */
@@ -92,9 +109,29 @@
   margin-bottom: 0.25rem;
 }
 
+.nav-icon {
+  min-width: 18px;
+  color: currentColor;
+}
+
+.nav-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* เมื่อ sidebar หุบ ให้ซ่อน nav-text */
+.sidebar.sidebar-collapsed .nav-text {
+  display: none;
+}
+
 .nav-link:hover {
   background: var(--primary-light);
   transform: translateX(4px);
+}
+
+.nav-link:hover .nav-icon {
+  color: var(--primary);
 }
 
 /* Active route */
@@ -102,6 +139,10 @@
   background: var(--primary);
   color: white;
   font-weight: 600;
+}
+
+.nav-link.active .nav-icon {
+  color: white;
 }
 
 /* Footer */
@@ -119,8 +160,17 @@
   transition: all 0.25s ease;
 }
 
+.user-icon {
+  min-width: 22px;
+  color: var(--text-dark);
+}
+
 .user-profile:hover {
   background: var(--primary-light);
+}
+
+.user-profile:hover .user-icon {
+  color: var(--primary);
 }
 
 .user-info {
@@ -130,9 +180,18 @@
 
 .user-name {
   font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  white-space: nowrap;
 }
 
 .user-role {
   font-size: 0.8rem;
   color: var(--text-light);
+  white-space: nowrap;
+}
+
+/* เมื่อ sidebar หุบ ให้ซ่อน user-info */
+.sidebar.sidebar-collapsed .user-info {
+  display: none;
 }

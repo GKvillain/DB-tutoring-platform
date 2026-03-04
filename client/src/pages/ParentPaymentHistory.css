@@ -1,0 +1,497 @@
+.payment-page {
+  margin-left: 70px;
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #F1F0FF;
+}
+
+.payment-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.payment-header {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.1);
+  border: 1px solid #EBC7E6;
+}
+
+.page-title {
+  font-size: 24px;
+  color: #A084DC;
+  margin: 0 0 20px 0;
+}
+
+.filter-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 600;
+  color: #A084DC;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #EBC7E6;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.filter-select:hover {
+  border-color: #A084DC;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #A084DC;
+  box-shadow: 0 0 0 2px rgba(160, 132, 220, 0.1);
+}
+
+.student-info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #EBC7E6;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.1);
+}
+
+.student-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #A084DC;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  border: 2px solid #F1F0FF;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.15);
+}
+
+.student-details h2 {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.student-nick {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.payment-history {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.course-payment-section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #EBC7E6;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.1);
+}
+
+.course-title {
+  font-size: 18px;
+  color: #A084DC;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F1F0FF;
+}
+
+.course-title-eng {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+  margin-left: 8px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.payment-table th {
+  background: #F1F0FF;
+  color: #A084DC;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 12px 10px;
+  text-align: center;
+  border: 1px solid #EBC7E6;
+}
+
+.payment-table td {
+  padding: 12px 10px;
+  border: 1px solid #EBC7E6;
+  text-align: center;
+  color: #333;
+  font-size: 13px;
+}
+
+.payment-table tbody tr:hover {
+  background: #F9F7FF;
+}
+
+.month-cell {
+  font-weight: 500;
+  color: #A084DC;
+  white-space: nowrap;
+}
+
+.number-cell {
+  font-weight: 500;
+}
+
+.number-cell.highlight {
+  color: #A084DC;
+  font-weight: 600;
+}
+
+.date-cell {
+  white-space: nowrap;
+  color: #666;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-paid {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.status-pending {
+  background: #feebc8;
+  color: #744210;
+  border: 1px solid #fbd38d;
+}
+
+.status-overdue {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #feb2b2;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 60px;
+  color: #A084DC;
+  font-size: 16px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #EBC7E6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 16px;
+  border: 2px dashed #EBC7E6;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: #A084DC;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+.select-student-prompt {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 16px;
+  border: 2px dashed #EBC7E6;
+}
+
+.prompt-icon {
+  font-size: 48px;
+  color: #A084DC;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.select-student-prompt h3 {
+  color: #A084DC;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.select-student-prompt p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .payment-page {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .student-info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .payment-table {
+    min-width: 700px;
+  }
+}
+
+/* เพิ่มใน ParentPaymentHistory.css */
+.number-cell {
+  font-weight: 500;
+  text-align: right;
+  padding-right: 20px;
+}
+
+.number-cell.highlight {
+  color: #A084DC;
+  font-weight: 600;
+}
+
+
+.slip-upload-section {
+  margin: 20px 0;
+  padding: 16px;
+  background: #F9F7FF;
+  border-radius: 12px;
+  border: 1px solid #EBC7E6;
+}
+
+.slip-title {
+  font-size: 15px;
+  color: #A084DC;
+  margin: 0 0 12px 0;
+}
+
+.slip-preview-container {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #EBC7E6;
+}
+
+.slip-preview {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.slip-placeholder {
+  width: 100%;
+  height: 150px;
+  background: #F1F0FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A084DC;
+  font-size: 14px;
+  border: 2px dashed #EBC7E6;
+  border-radius: 8px;
+}
+
+.remove-slip-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #FF6B6B;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.remove-slip-btn:hover {
+  background: #FF5252;
+  transform: scale(1.1);
+}
+
+.slip-upload-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.slip-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #A084DC;
+  border-radius: 20px;
+  color: #A084DC;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slip-upload-btn:hover {
+  background: #A084DC;
+  color: white;
+}
+
+.slip-filename {
+  font-size: 12px;
+  color: #666;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slip-hint {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* เพิ่มใน ParentPaymentHistory.css */
+
+.success-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 70px); /* ลบความสูงของ navbar (70px) */
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.success-message {
+  text-align: center;
+  padding: 40px 60px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #EBC7E6;
+  box-shadow: 0 4px 20px rgba(160, 132, 220, 0.15);
+  max-width: 400px;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: bounce 1s ease;
+}
+
+.success-message h2 {
+  color: #A084DC;
+  font-size: 24px;
+  margin: 0 0 10px 0;
+}
+
+.success-message p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .success-container {
+    min-height: calc(100vh - 60px);
+  }
+  
+  .success-message {
+    padding: 30px 40px;
+  }
+  
+  .success-icon {
+    font-size: 48px;
+  }
+  
+  .success-message h2 {
+    font-size: 20px;
+  }
+}

@@ -1,0 +1,153 @@
+
+/* ===== Layout ===== */
+.student-container {
+  padding: 40px 20px;
+  max-width: 1100px;      /* จำกัดความกว้าง */
+  margin: 0 auto;         /* ทำให้มันอยู่ตรงกลาง */
+}
+
+.student-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* ===== Summary Section ===== */
+.summary-section {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: #e6e6e6;
+  padding: 20px 40px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 200px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.summary-card p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.summary-card h2 {
+  margin-top: 10px;
+  font-size: 26px;
+}
+
+/* ===== Search ===== */
+.search-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.search-wrapper input {
+  width: 350px;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.search-wrapper input:focus {
+  border-color: #7b5db0;
+}
+
+/* ===== Student List ===== */
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== Card ===== */
+.student-card {
+  display: flex;
+  background: #f3f3f3;
+  padding: 20px;
+  border-radius: 12px;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Image ===== */
+.student-image {
+  width: 130px;
+  height: 130px;
+  margin-right: 25px;
+}
+
+.student-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  background: #ccc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #666;
+}
+
+/* ===== Details ===== */
+.student-details p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* ===== Loading ===== */
+.loading-text {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.parent-contact {
+  display: flex;
+  flex-wrap: wrap;   /* ถ้าจอแคบจะขึ้นบรรทัดใหม่ */
+  gap: 20px;         /* ระยะห่างระหว่างแต่ละอัน */
+}
+.student-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;  /* ทำให้เป็นวงกลม */
+  overflow: hidden;     /* ซ่อนส่วนที่เกิน */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.student-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* ทำให้รูปเต็มพื้นที่而不เสียสัดส่วน */
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  border-radius: 50%;
+}

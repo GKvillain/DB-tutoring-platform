@@ -1,0 +1,724 @@
+/* HomeParent.css */
+
+/* ตั้งค่าพื้นฐาน */
+:root {
+  font-size: 16px; /* 1rem = 16px */
+}
+
+.page-with-sidebar {
+  margin-left: 4.375rem; /* 70px */
+  padding: 1.875rem; /* 30px */
+  min-height: 100vh;
+  background: #F1F0FF; /* ขาวอมม่วง */
+}
+
+.session-container {
+  max-width: 100rem; /* 1600px */
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ===== Filter Section ===== */
+.filter-section {
+  background: white;
+  border-radius: 1.25rem; /* 20px */
+  padding: 1.25rem 1.875rem; /* 20px 30px */
+  margin-bottom: 1.875rem; /* 30px */
+  box-shadow: 0 0.625rem 1.875rem rgba(160, 132, 220, 0.1); /* ม่วงอ่อน */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem; /* 20px */
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-section label {
+  font-weight: 600;
+  color: #A084DC; /* ม่วง */
+  font-size: 0.9375rem; /* 15px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  padding: 0.625rem 1.25rem; /* 10px 20px */
+  border-radius: 3.125rem; /* 50px */
+  margin: 0;
+  letter-spacing: 0.01875rem; /* 0.3px */
+  box-shadow: inset 0 0.125rem 0.25rem rgba(160, 132, 220, 0.05);
+  white-space: nowrap;
+}
+
+.student-select {
+  padding: 0.75rem 1.5625rem; /* 12px 25px */
+  border: 0.125rem solid #EBC7E6; /* 2px ชมพูอ่อน */
+  border-radius: 3.125rem; /* 50px */
+  font-size: 0.9375rem; /* 15px */
+  min-width: 25rem; /* 400px */
+  background-color: white;
+  cursor: pointer;
+  color: #1a202c;
+  font-weight: 500;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A084DC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center; /* 20px */
+  background-size: 1.125rem; /* 18px */
+  padding-right: 3.125rem; /* 50px */
+  flex: 1;
+  max-width: 100%;
+}
+
+.student-select:hover {
+  border-color: #A084DC; /* ม่วง */
+  background-color: #F1F0FF;
+}
+
+.filter-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9375rem; /* 15px */
+  color: #4a5568;
+  font-size: 0.875rem; /* 14px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  padding: 0.5rem 1.25rem; /* 8px 20px */
+  border-radius: 3.125rem; /* 50px */
+  margin-left: auto;
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  white-space: nowrap;
+}
+
+.filter-info span {
+  font-weight: 600;
+  color: #A084DC; /* ม่วง */
+  font-size: 1rem; /* 16px */
+}
+
+.clear-filter-btn {
+  background: white;
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  color: #A084DC; /* ม่วง */
+  padding: 0.375rem 1.125rem; /* 6px 18px */
+  border-radius: 3.125rem; /* 50px */
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem; /* 6px */
+}
+
+.clear-filter-btn:hover {
+  background: #A084DC; /* ม่วง */
+  color: white;
+  border-color: #A084DC;
+}
+
+/* ===== Session Grid Layout ===== */
+.session-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.875rem; /* 30px */
+  width: 100%;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.875rem; /* 30px */
+  width: 100%;
+}
+
+.right-column {
+  position: sticky;
+  top: 1.875rem; /* 30px */
+  height: fit-content;
+  width: 100%;
+}
+
+/* ===== Section Cards ===== */
+.section-card {
+  background: white;
+  border-radius: 1.5rem; /* 24px */
+  padding: 1.875rem; /* 30px */
+  box-shadow: 0 0.3125rem 1.25rem rgba(160, 132, 220, 0.1); /* ม่วงอ่อน */
+  border: 1px solid #F1F0FF; /* ขาวอมม่วง */
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.session-title {
+  font-size: 1.375rem; /* 22px */
+  font-weight: 700;
+  color: #A084DC; /* ม่วง */
+  margin: 0 0 1.5625rem 0; /* 25px */
+  padding-bottom: 0.9375rem; /* 15px */
+  border-bottom: 0.1875rem solid; /* 3px */
+  display: inline-block;
+  letter-spacing: -0.01875rem; /* -0.3px */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.left-column .session-title {
+  border-bottom-color: #A084DC; /* ม่วง */
+}
+
+.right-column .session-title {
+  border-bottom-color: #EBC7E6; /* ชมพูอ่อน */
+}
+
+/* ===== Date Group Cards ===== */
+.date-group-card {
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-radius: 1.25rem; /* 20px */
+  padding: 1.5625rem; /* 25px */
+  margin-bottom: 1.5625rem; /* 25px */
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.date-group-card:last-child {
+  margin-bottom: 0;
+}
+
+.date-group-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+  color: #A084DC; /* ม่วง */
+  margin: 0 0 1.25rem 0; /* 20px */
+  padding-bottom: 0.75rem; /* 12px */
+  border-bottom: 0.125rem dashed #EBC7E6; /* 2px ชมพูอ่อน */
+  display: flex;
+  align-items: center;
+  gap: 0.9375rem; /* 15px */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.date-group-title span {
+  background: #A084DC; /* ม่วง */
+  color: white;
+  padding: 0.375rem 1rem; /* 6px 16px */
+  border-radius: 1.875rem; /* 30px */
+  font-size: 0.875rem; /* 14px */
+  margin-left: auto;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ===== Session Cards ===== */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 16px */
+  width: 100%;
+}
+
+.session-card {
+  background: white;
+  border-radius: 1.125rem; /* 18px */
+  overflow: hidden;
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.session-header {
+  padding: 1rem 1.25rem; /* 16px 20px */
+  display: flex;
+  gap: 1.25rem; /* 20px */
+  align-items: flex-start;
+  background: white;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.session-header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-header h3 {
+  margin: 0 0 0.75rem 0; /* 12px */
+  color: #A084DC; /* ม่วง */
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.student-name {
+  margin: 0;
+  font-size: 0.9375rem; /* 15px */
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* 8px */
+  line-height: 1.3;
+}
+
+.student-name strong {
+  color: #A084DC; /* ม่วง */
+  font-weight: 600;
+  font-size: 1rem; /* 16px */
+}
+
+.student-name span {
+  background: #F1F0FF; /* ขาวอมม่วง */
+  padding: 0.25rem 0.75rem; /* 4px 12px */
+  border-radius: 1.875rem; /* 30px */
+  font-size: 0.875rem; /* 14px */
+  white-space: nowrap;
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem; /* 20px */
+  margin-top: 0.75rem; /* 12px */
+  flex-wrap: wrap;
+}
+
+.date-info span {
+  color: #64748b;
+  font-size: 0.875rem; /* 14px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  padding: 0.375rem 1rem; /* 6px 16px */
+  border-radius: 1.875rem; /* 30px */
+  display: inline-flex;
+  align-items: center;
+  word-break: break-word;
+}
+
+.toggle-btn {
+  padding: 0.5rem 1.25rem; /* 8px 20px */
+  background: #A084DC; /* ม่วง */
+  border: none;
+  border-radius: 2.5rem; /* 40px */
+  color: white;
+  cursor: pointer;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 0.25rem 0.75rem rgba(160, 132, 220, 0.25); /* ม่วงอ่อน */
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+  transform: translateY(-0.125rem); /* -2px */
+  box-shadow: 0 0.5rem 1.25rem rgba(160, 132, 220, 0.35);
+  background: #8B6EC9; /* ม่วงเข้ม */
+}
+
+/* ===== Session Details ===== */
+.session-detail-wrapper {
+  padding: 1.5625rem; /* 25px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-top: 0.125rem solid #EBC7E6; /* 2px ชมพูอ่อน */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inner-detail-card {
+  background: white;
+  border-radius: 1rem; /* 16px */
+  padding: 1.375rem; /* 22px */
+  box-shadow: 0 0.125rem 0.5rem rgba(160, 132, 220, 0.1); /* ม่วงอ่อน */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.record-card {
+  padding: 1.25rem; /* 20px */
+  border-bottom: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.record-card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.record-card:first-child {
+  padding-top: 0;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.125rem; /* 18px */
+  flex-wrap: wrap;
+  gap: 0.9375rem; /* 15px */
+}
+
+.lesson-topic {
+  font-weight: 700;
+  color: #A084DC; /* ม่วง */
+  font-size: 1.0625rem; /* 17px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  padding: 0.5rem 1.25rem; /* 8px 20px */
+  border-radius: 1.875rem; /* 30px */
+  word-break: break-word;
+}
+
+.status-badge {
+  padding: 0.375rem 1.25rem; /* 6px 20px */
+  border-radius: 1.875rem; /* 30px */
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  letter-spacing: 0.03125rem; /* 0.5px */
+  white-space: nowrap;
+}
+
+.status-badge.done {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.status-badge.missing {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #feb2b2;
+}
+
+.record-detail {
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-radius: 0.875rem; /* 14px */
+  padding: 1.125rem; /* 18px */
+  margin-top: 0.9375rem; /* 15px */
+}
+
+.record-detail p {
+  margin: 0.75rem 0 0 0; /* 12px */
+  color: #4a5568;
+  line-height: 1.7;
+  font-size: 0.9375rem; /* 15px */
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9375rem; /* 15px */
+  word-break: break-word;
+}
+
+.record-detail p:first-child {
+  margin-top: 0;
+}
+
+.record-detail strong {
+  color: #A084DC; /* ม่วง */
+  font-weight: 600;
+  display: inline-block;
+  min-width: 8.125rem; /* 130px */
+  font-size: 0.9375rem; /* 15px */
+  flex-shrink: 0;
+}
+
+.record-detail span {
+  color: #4a5568;
+  font-size: 0.9375rem; /* 15px */
+  flex: 1;
+  word-break: break-word;
+}
+
+/* ===== Empty States ===== */
+.empty-text {
+  color: #A084DC; /* ม่วง */
+  text-align: center;
+  padding: 3.125rem 1.875rem; /* 50px 30px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-radius: 1.25rem; /* 20px */
+  border: 0.125rem dashed #EBC7E6; /* 2px ชมพูอ่อน */
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.loading-text {
+  text-align: center;
+  color: #A084DC; /* ม่วง */
+  padding: 5rem; /* 80px */
+  font-size: 1.125rem; /* 18px */
+  background: white;
+  border-radius: 1.5rem; /* 24px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9375rem; /* 15px */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ===== Course Image ===== */
+.course-image-wrapper {
+  width: 4.5rem; /* 72px */
+  height: 4.5rem; /* 72px */
+  flex-shrink: 0;
+  border-radius: 0.5rem; /* 8px */
+  overflow: hidden;
+}
+
+.course-image-wrapper .imgUpload {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  box-shadow: 0 0.125rem 0.25rem rgba(160, 132, 220, 0.1);
+  border-radius: 0.5rem; /* 8px */
+}
+
+.course-image-wrapper .imgUpload span {
+  font-size: 2rem; /* 32px */
+  color: #A084DC; /* ม่วง */
+}
+
+/* ===== Session Header Layout ===== */
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem; /* 4px */
+  gap: 0.75rem; /* 12px */
+}
+
+.session-header-top h3 {
+  margin: 0;
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: #A084DC; /* ม่วง */
+  line-height: 1.4;
+  word-break: break-word;
+  flex: 1;
+}
+
+.session-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* 4px */
+  margin-top: 0;
+}
+
+/* ===== Time Information ===== */
+.session-time-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem; /* 8px */
+  align-items: center;
+  margin-top: 0.125rem; /* 2px */
+}
+
+.time-range {
+  display: inline-flex;
+  align-items: center;
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-radius: 1.875rem; /* 30px */
+  padding: 0.25rem 0.75rem; /* 4px 12px */
+  font-size: 0.8125rem; /* 13px */
+  color: #A084DC; /* ม่วง */
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.time-range::before {
+  content: "";
+  margin-right: 0.25rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.description-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem; /* 4px */
+  padding: 0.25rem 0.75rem; /* 4px 12px */
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-radius: 1.875rem; /* 30px */
+  font-size: 0.75rem; /* 12px */
+  color: #A084DC; /* ม่วง */
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ===== Attendance Badge ===== */
+.attendance-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem; /* 4px 12px */
+  border-radius: 1.875rem; /* 30px */
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.attendance-badge.present {
+  background: #c6f6d5;
+  color: #22543d;
+  border: 1px solid #9ae6b4;
+}
+
+.attendance-badge.absent {
+  background: #fed7d7;
+  color: #742a2a;
+  border: 1px solid #feb2b2;
+}
+
+.attendance-badge.late {
+  background: #feebc8;
+  color: #744210;
+  border: 1px solid #fbd38d;
+}
+
+.attendance-badge.unknown {
+  background: #F1F0FF; /* ขาวอมม่วง */
+  color: #A084DC; /* ม่วง */
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 75rem) { /* 1200px */
+  .session-grid {
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5625rem; /* 25px */
+  }
+  
+  .student-select {
+    min-width: 18.75rem; /* 300px */
+  }
+}
+
+@media (max-width: 64rem) { /* 1024px */
+  .session-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .right-column {
+    position: static;
+  }
+}
+
+@media (max-width: 48rem) { /* 768px */
+  .page-with-sidebar {
+    margin-left: 0;
+    padding: 1.25rem; /* 20px */
+  }
+  
+  .filter-section {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem; /* 20px */
+  }
+  
+  .filter-section label {
+    white-space: normal;
+    text-align: center;
+  }
+  
+  .filter-info {
+    margin-left: 0;
+    justify-content: space-between;
+    width: 100%;
+    white-space: normal;
+    flex-wrap: wrap;
+  }
+  
+  .student-select {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .session-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .toggle-btn {
+    width: 100%;
+  }
+  
+  .date-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem; /* 8px */
+  }
+  
+  .date-info span {
+    width: 100%;
+  }
+  
+  .record-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .lesson-topic {
+    width: 100%;
+  }
+  
+  .status-badge {
+    width: fit-content;
+  }
+  
+  .record-detail p {
+    flex-direction: column;
+    gap: 0.3125rem; /* 5px */
+  }
+  
+  .record-detail strong {
+    min-width: auto;
+  }
+
+  .course-image-wrapper {
+    width: 4rem; /* 64px */
+    height: 4rem; /* 64px */
+  }
+  
+  .session-time-info {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+}
+
+/* ===== Additional Improvements ===== */
+* {
+  box-sizing: border-box;
+}
+
+.section-card,
+.date-group-card,
+.session-card,
+.session-detail-wrapper,
+.inner-detail-card,
+.record-card {
+  max-width: 100%;
+}
+
+.session-header h3,
+.student-name,
+.date-info span,
+.lesson-topic,
+.record-detail p {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.session-card:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.75rem 1.875rem rgba(160, 132, 220, 0.15);
+}

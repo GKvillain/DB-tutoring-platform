@@ -1,0 +1,135 @@
+/* EditinfoParent.css */
+
+/* ===== Layout หลัก ===== */
+.page-with-sidebar {
+  display: flex;
+  min-height: 100vh;
+  background: #F1F0FF; /* ขาวอมม่วง */
+}
+
+/* ===== กล่องกลาง ===== */
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 40px;
+}
+
+/* ===== Card ขาว ===== */
+.form-wrapper {
+  background: white;
+  width: 800px;
+  max-width: 95%;
+  padding: 50px 60px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(160, 132, 220, 0.1); /* ม่วงอ่อน */
+  border: 1px solid #EBC7E6; /* ชมพูอ่อน */
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ===== หัวข้อ ===== */
+.topic {
+  text-align: center;
+  font-size: 28px;
+  color: #A084DC; /* ม่วง */
+  margin-bottom: 10px;
+}
+
+/* ===== Row 2 ช่อง ===== */
+.form-row {
+  display: flex;
+  gap: 30px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #A084DC; /* ม่วง */
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* ===== Input ===== */
+.form-group input {
+  padding: 14px;
+  border-radius: 10px;
+  border: 2px solid #EBC7E6; /* ชมพูอ่อน */
+  background: #FFFFFF;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #A084DC; /* ม่วง */
+  box-shadow: 0 0 0 3px rgba(160, 132, 220, 0.1);
+}
+
+.form-group input:hover {
+  border-color: #A084DC; /* ม่วง */
+}
+
+.form-group input:disabled {
+  background: #F1F0FF; /* ขาวอมม่วง */
+  border-color: #EBC7E6; /* ชมพูอ่อน */
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* ===== ปุ่ม ===== */
+.btn-clear {
+  margin-top: 20px;
+  align-self: center;
+  padding: 12px 30px;
+  border-radius: 30px; /* เปลี่ยนเป็น 30px ให้โค้งมนขึ้น */
+  border: none;
+  background: #A084DC; /* ม่วง */
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+  min-width: 200px;
+}
+
+.btn-clear:hover {
+  background: #8B6EC9; /* ม่วงเข้ม */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.3);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 20px;
+  }
+
+  .form-wrapper {
+    padding: 30px 20px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .topic {
+    font-size: 24px;
+  }
+
+  .btn-clear {
+    width: 100%;
+  }
+}

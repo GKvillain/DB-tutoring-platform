@@ -1,0 +1,288 @@
+
+
+.course-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 0;  
+  display: block;
+}
+
+.course-detail-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.course-detail-container {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-title {
+  font-size: 32px;
+  color: #333;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.info-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.info-grid {
+  display: grid;
+  gap: 15px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.info-label {
+  min-width: 150px;
+  font-weight: 600;
+  color: #555;
+}
+
+.info-value {
+  color: #333;
+  flex: 1;
+}
+
+/* Tutor section */
+.tutor-info {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.tutor-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.tutor-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.tutor-basic-info {
+  flex: 1;
+}
+
+.tutor-name {
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 5px 0;
+}
+
+.tutor-specialize {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+
+.tutor-details {
+  margin: 20px 0;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+}
+
+.tutor-details p {
+  margin: 10px 0;
+  color: #555;
+}
+
+.tutor-details strong {
+  color: #333;
+  min-width: 120px;
+  display: inline-block;
+}
+
+.view-tutor-profile-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+}
+
+.view-tutor-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Course description */
+.course-description {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.course-description h3 {
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+}
+
+.course-description p {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.course-topics {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.course-topics h3 {
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+}
+
+.topics-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.topic-item {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: #555;
+  border: 1px solid #e0e0e0;
+}
+
+/* Course image */
+.course-image-large {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .course-detail-container {
+    padding: 20px;
+  }
+
+  .course-title {
+    font-size: 24px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .info-label {
+    min-width: auto;
+  }
+
+  .tutor-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .tutor-details strong {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .topics-list {
+    grid-template-columns: 1fr;
+  }
+}
+.course-description,
+.course-details {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  line-height: 1.6;
+  color: #555;
+  border: 1px solid #e0e0e0;  
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);  
+}
+
+.course-description p,
+.course-details p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+
+.section-title {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 15px;  
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+
+.info-section {
+  margin-bottom: 30px;  
+}
+
+
+.course-description,
+.course-details,
+.info-card,
+.tutor-info {
+  border-radius: 12px;  
+}
