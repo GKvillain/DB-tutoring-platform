@@ -1,8 +1,9 @@
 import express from "express";
-import { getDashboard } from "../controllers/statController.js";
+import { getCourseSum, getDashboard } from "../controllers/statController.js";
 
 const router = express.Router();
 
-router.get("/", getDashboard);
+router.get("/dashboard", getDashboard);
+router.get("/getCourseSummary", getCourseSum);
 
 export default router;

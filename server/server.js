@@ -5,12 +5,15 @@ import express from "express";
 import cors from "cors";
 import supabase from "./config/supabaseClient.js";
 import statRoutes from "./routes/statRoutes.js";
+import learningRecordRoutes from "./routes/learningRecordRoutes.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/dashboard", statRoutes);
+app.use("/api/stat", statRoutes);
+app.use("/api/getCouresSummary", statRoutes);
+app.use("/api/learningRecord", learningRecordRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running!" });
@@ -93,24 +96,6 @@ app.get("/api/test", async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // });
-
-app.get("/api/getCourseSummary", async (req, res) => {
-  try {
-    const { month, year, tutor_id } = req.query;
-
-    const { data, error } = await supabase.rpc("get_course_monthly_summary", {
-      p_month: month,
-      p_year: year,
-      current_tutor_id: tutor_id,
-    });
-
-    if (error) throw error;
-    res.json(data);
-  } catch (err) {
-    console.error("Error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // REMOVED DUPLICATE LOGIN ENDPOINT - Keeping only one
 app.post("/api/login", async (req, res) => {
@@ -515,9 +500,9 @@ app.get("/api/getStudentNameByTutor", async (req, res) => {
   }
 });
 
-app.get("/api/getDetailPayment", async (req, res) => {
+app.get("/api/getDetailPayment/:current_tutor_id", async (req, res) => {
   try {
-    const { current_tutor_id, p_student_id, p_course_name } = req.query;
+    const { current_tutor_id, p_student_id, p_course_name } = req.params;
 
     if (!current_tutor_id) {
       return res.status(400).json({ error: "current_tutor_id is required" });

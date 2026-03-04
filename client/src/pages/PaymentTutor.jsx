@@ -16,6 +16,24 @@ export function PaymentTutor() {
   const [error, setError] = useState(null);
   const [detail, setDetail] = useState([]);
 
+  // Helper function to format date to Buddhist year in YYYY-MM-DD format
+  const formatThaiDate = (dateString) => {
+    if (!dateString) return "-";
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+
+      const year = date.getFullYear() + 543; // Convert to Buddhist year
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    } catch {
+      return dateString;
+    }
+  };
+
   const toggleCard = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -57,7 +75,7 @@ export function PaymentTutor() {
         const hoursData = await hoursRes.json();
 
         const detailRes = await fetch(
-          `http://localhost:3000/api/getDetailPayment?current_tutor_id=${tutor_id}`,
+          `http://localhost:3000/api/getDetailPayment/${tutor_id}?p_student_id=&p_course_name=`,
         );
 
         const detailData = await detailRes.json();
@@ -302,8 +320,8 @@ export function PaymentTutor() {
                                   <p>{session.total_hours}</p>
                                   <p>{session.price_per_hour}</p>
                                   <p>{session.total_amount}</p>
-                                  <p>{session.payment_date}</p>
-                                  <p>{session.paid_date || "-"}</p>
+                                  <p>{formatThaiDate(session.payment_date)}</p>
+                                  <p>{formatThaiDate(session.paid_date)}</p>
                                   <p>
                                     <span
                                       className={`status-badge ${session.payment_status === "PAID" ? "paid" : "pending"}`}

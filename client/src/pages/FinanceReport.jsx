@@ -1,6 +1,6 @@
 import "./FinanceReport.css";
 import Navigation from "../components/Navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Calendar,
   CalendarDays,
@@ -21,9 +21,211 @@ export function FinanceReport() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [listPayment, setListPayment] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
   const accountId = localStorage.getItem("account_id");
+
+  // Group sessions by month and student to create payment summaries
+  const groupedPayments = useMemo(() => {
+    const paymentMap = new Map();
+
+    sessions.forEach((session) => {
+      // Create a unique key for each month+student+course combination
+      const key = `${session.year_month}-${session.student_id}-${session.course_name_thai}`;
+
+      if (!paymentMap.has(key)) {
+        paymentMap.set(key, {
+          month: session.year_month,
+          student_id: session.student_id,
+          student_name: session.student_name,
+          course_name_thai: session.course_name_thai,
+          course_name_eng: session.course_name_eng,
+          paid_date: session.paid_date,
+          total_amount: 0,
+          session_count: 0,
+        });
+      }
+
+      const payment = paymentMap.get(key);
+      payment.total_amount += session.total_amount || 0;
+      payment.session_count += 1;
+
+      // Use the most recent paid_date if multiple
+      if (
+        session.paid_date &&
+        (!payment.paid_date ||
+          new Date(session.paid_date) > new Date(payment.paid_date))
+      ) {
+        payment.paid_date = session.paid_date;
+      }
+    });
+
+    // Convert to array and sort by paid_date in descending order (newest first)
+    return Array.from(paymentMap.values()).sort((a, b) => {
+      // Handle cases where paid_date might be null
+      if (!a.paid_date && !b.paid_date) return 0;
+      if (!a.paid_date) return 1; // Put null dates at the end
+      if (!b.paid_date) return -1; // Put null dates at the end
+
+      // Sort by paid_date descending (newest first)
+      return new Date(b.paid_date) - new Date(a.paid_date);
+    });
+  }, [sessions]);
+
+  // Filter payments by selected month
+  const filteredPayments = useMemo(() => {
+    const filtered = selectedMonth
+      ? groupedPayments.filter((payment) => {
+          if (!payment.month) return false;
+
+          try {
+            // Extract month from year_month (YYYY-MM)
+            if (
+              typeof payment.month === "string" &&
+              payment.month.includes("-")
+            ) {
+              const month = parseInt(payment.month.split("-")[1], 10);
+              return month.toString() === selectedMonth;
+            }
+            return false;
+          } catch {
+            return false;
+          }
+        })
+      : groupedPayments;
+
+    return filtered;
+  }, [groupedPayments, selectedMonth]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredPayments.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const currentPayments = filteredPayments.slice(startIndex, endIndex);
+
+  // Calculate total amount for current page
+  const totalAmount = currentPayments.reduce(
+    (sum, p) => sum + (p.total_amount || 0),
+    0,
+  );
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Handle rows per page change
+  const handleRowsPerPageChange = (e) => {
+    const newRows = parseInt(e.target.value, 10);
+    setRowsPerPage(newRows);
+    setCurrentPage(1); // Reset to first page
+  };
+
+  // Helper function to format date to show only month and year in Thai
+  const formatThaiMonth = (dateString) => {
+    if (!dateString) return "-";
+
+    try {
+      let date;
+
+      if (typeof dateString === "string") {
+        if (
+          dateString.trim() === "" ||
+          dateString === "null" ||
+          dateString === "undefined"
+        ) {
+          return "-";
+        }
+
+        // Handle YYYY-MM format
+        if (dateString.match(/^\d{4}-\d{2}$/)) {
+          const [year, month] = dateString.split("-").map(Number);
+          date = new Date(year, month - 1, 1);
+        }
+        // Handle YYYY-MM-DD format
+        else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          const [year, month, day] = dateString.split("-").map(Number);
+          date = new Date(year, month - 1, day);
+        } else {
+          date = new Date(dateString);
+        }
+      } else {
+        date = new Date(dateString);
+      }
+
+      if (isNaN(date.getTime())) {
+        return "-";
+      }
+
+      if (
+        date.getFullYear() === 1970 &&
+        date.getMonth() === 0 &&
+        date.getDate() === 1
+      ) {
+        return "-";
+      }
+
+      return date.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        timeZone: "Asia/Bangkok",
+      });
+    } catch {
+      return "-";
+    }
+  };
+
+  // Helper function to format full date with day
+  const formatThaiFullDate = (dateString) => {
+    if (!dateString) return "-";
+
+    try {
+      let date;
+
+      if (typeof dateString === "string") {
+        if (
+          dateString.trim() === "" ||
+          dateString === "null" ||
+          dateString === "undefined"
+        ) {
+          return "-";
+        }
+
+        if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          const [year, month, day] = dateString.split("-").map(Number);
+          date = new Date(year, month - 1, day);
+        } else {
+          date = new Date(dateString);
+        }
+      } else {
+        date = new Date(dateString);
+      }
+
+      if (isNaN(date.getTime())) {
+        return "-";
+      }
+
+      if (
+        date.getFullYear() === 1970 &&
+        date.getMonth() === 0 &&
+        date.getDate() === 1
+      ) {
+        return "-";
+      }
+
+      return date.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "Asia/Bangkok",
+      });
+    } catch {
+      return "-";
+    }
+  };
 
   useEffect(() => {
     async function fetchStat() {
@@ -53,9 +255,9 @@ export function FinanceReport() {
           `http://localhost:3000/api/income-finance/statistics/${tutor_id}`,
         );
 
-        // Fetch monthly payments
+        // Fetch monthly payment details (sessions)
         const paymentRes = await fetch(
-          `http://localhost:3000/api/get_monthly_student_payments/${tutor_id}`,
+          `http://localhost:3000/api/getDetailPayment/${tutor_id}`,
         );
 
         if (!statRes.ok) {
@@ -69,12 +271,13 @@ export function FinanceReport() {
         const statData = await statRes.json();
 
         // Only try to parse payment data if response is OK
-        let paymentData = [];
+        let sessionData = [];
         if (paymentRes.ok) {
-          paymentData = await paymentRes.json();
+          sessionData = await paymentRes.json();
+          console.log("Raw session data sample:", sessionData[0]);
         }
 
-        setListPayment(paymentData);
+        setSessions(sessionData);
         console.log("Raw data from API:", statData);
 
         const formattedStats = {
@@ -113,7 +316,6 @@ export function FinanceReport() {
             }
           });
         } else if (statData && typeof statData === "object") {
-          // If API returns object directly
           formattedStats.today = statData.today || 0;
           formattedStats.week = statData.week || 0;
           formattedStats.month = statData.month || 0;
@@ -136,19 +338,6 @@ export function FinanceReport() {
 
     fetchStat();
   }, [accountId]);
-
-  // Filter payments by selected month
-  const filteredPayments = selectedMonth
-    ? listPayment.filter((payment) => {
-        const paymentMonth = new Date(payment.month).getMonth() + 1;
-        return paymentMonth.toString() === selectedMonth;
-      })
-    : listPayment;
-
-  // Calculate total amount
-  const totalAmount = filteredPayments
-    .slice(0, 10)
-    .reduce((sum, p) => sum + (p.total_payment || 0), 0);
 
   if (loading) {
     return (
@@ -278,53 +467,139 @@ export function FinanceReport() {
 
         {filteredPayments.length > 0 ? (
           <div className="payment-list">
-            <h2>รายการชำระเงินล่าสุด</h2>
-            <table className="payment-table">
-              <thead>
-                <tr>
-                  <th>เดือน</th>
-                  <th>นักเรียน</th>
-                  <th>คอร์ส</th>
-                  <th>วันที่ชำระ</th>
-                  <th>จำนวนเงิน</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredPayments.slice(0, 10).map((payment, index) => (
-                  <tr key={index}>
-                    <td>
-                      {new Date(payment.month).toLocaleDateString("th-TH", {
-                        year: "numeric",
-                        month: "long",
-                        timeZone: "Asia/Bangkok",
-                      })}
-                    </td>
-                    <td>{payment.student_name}</td>
-                    <td>
-                      {payment.course_name_thai || payment.course_name_eng}
-                    </td>
-                    <td>
-                      {payment.paid_date
-                        ? new Date(payment.paid_date).toLocaleDateString(
-                            "th-TH",
-                            {
-                              timeZone: "Asia/Bangkok",
-                            },
-                          )
-                        : "-"}
-                    </td>
-                    <td className="amount-column">
-                      {payment.total_payment?.toLocaleString()} บาท
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="table-footer">
+            <div className="payment-header-with-controls">
+              <h2>รายการชำระเงินล่าสุด</h2>
+              <div className="pagination-controls">
+                <div className="rows-per-page">
+                  <label htmlFor="rowsPerPage">แสดง:</label>
+                  <select
+                    id="rowsPerPage"
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    className="rows-select"
+                  >
+                    <option value="5">5 รายการ</option>
+                    <option value="10">10 รายการ</option>
+                    <option value="20">20 รายการ</option>
+                    <option value="50">50 รายการ</option>
+                  </select>
+                </div>
+                <div className="page-info">
+                  {startIndex + 1} -{" "}
+                  {Math.min(endIndex, filteredPayments.length)} จาก{" "}
+                  {filteredPayments.length} รายการ
+                </div>
+              </div>
+            </div>
+
+            {/* Header */}
+            <div className="payment-header-row">
+              <div className="payment-header-cell">เดือน</div>
+              <div className="payment-header-cell">นักเรียน</div>
+              <div className="payment-header-cell">คอร์ส</div>
+              <div className="payment-header-cell">วันที่ชำระ</div>
+              <div className="payment-header-cell">จำนวนเงิน</div>
+            </div>
+
+            {/* Payment rows with dividers */}
+            <div className="payment-rows">
+              {currentPayments.map((payment, index) => {
+                return (
+                  <div
+                    key={`${payment.student_id}-${payment.month}-${payment.course_name_thai}`}
+                  >
+                    <div className="payment-row">
+                      <div className="payment-cell">
+                        {payment.month ? formatThaiMonth(payment.month) : "-"}
+                      </div>
+                      <div className="payment-cell">
+                        {payment.student_name || "-"}
+                      </div>
+                      <div className="payment-cell">
+                        {payment.course_name_thai ||
+                          payment.course_name_eng ||
+                          "-"}
+                      </div>
+                      <div className="payment-cell">
+                        {payment.paid_date
+                          ? formatThaiFullDate(payment.paid_date)
+                          : "-"}
+                      </div>
+                      <div className="payment-cell amount-column">
+                        {(payment.total_amount || 0).toLocaleString()} บาท
+                      </div>
+                    </div>
+                    {/* Add divider except for the last item */}
+                    {index < currentPayments.length - 1 && (
+                      <div className="payment-divider"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                  className="pagination-button"
+                >
+                  «
+                </button>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="pagination-button"
+                >
+                  ‹
+                </button>
+
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`pagination-button ${currentPage === pageNum ? "active" : ""}`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="pagination-button"
+                >
+                  ›
+                </button>
+                <button
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="pagination-button"
+                >
+                  »
+                </button>
+              </div>
+            )}
+
+            {/* Footer with total */}
+            <div className="payment-footer">
               <div className="total-row">
-                <span>
-                  รวมทั้งหมด ({filteredPayments.slice(0, 10).length} รายการ):
-                </span>
+                <span>รวมทั้งหมด ({currentPayments.length} รายการ):</span>
                 <span>{totalAmount.toLocaleString()} บาท</span>
               </div>
             </div>

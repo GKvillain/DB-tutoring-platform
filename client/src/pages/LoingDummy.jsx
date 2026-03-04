@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginDummy.css"; // Create this CSS file
 
-export function Login() {
+export function LoginDummy() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -48,7 +48,7 @@ export function Login() {
       if (data.role === "P") {
         navigate("/parent/EditInfoParent");
       } else if (data.role === "T") {
-        navigate("/teaching/statistics");
+        navigate("/teaching/statistic");
       } else {
         alert("Role ไม่ถูกต้อง");
         setLoading(false);

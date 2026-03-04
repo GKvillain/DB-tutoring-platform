@@ -506,3 +506,237 @@
     font-size: 1.1rem;
   }
 }
+
+.payment-list {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.payment-list h2 {
+  color: #495057;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.payment-header-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 1fr;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.payment-header-cell {
+  text-align: left;
+  padding: 0 0.5rem;
+}
+
+.payment-rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+}
+
+.payment-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2fr 1.5fr 1fr;
+  padding: 1rem 1rem;
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+.payment-row:hover {
+  background-color: #f8f9fa;
+}
+
+.payment-cell {
+  padding: 0 0.5rem;
+  color: #212529;
+  word-break: break-word;
+}
+
+.payment-cell.amount-column {
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* Divider between payment items */
+.payment-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #dee2e6, transparent);
+  margin: 0.5rem 0;
+}
+
+/* Payment header with controls */
+.payment-header-with-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.payment-header-with-controls h2 {
+  margin-bottom: 0;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rows-per-page label {
+  color: #a084dc;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.rows-select {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ebc7e6;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #a084dc;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23a084dc' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.rows-select:hover {
+  border-color: #a084dc;
+  box-shadow: 0 2px 8px rgba(160, 132, 220, 0.15);
+}
+
+.page-info {
+  color: #a084dc;
+  font-weight: 500;
+  font-size: 0.9rem;
+  background: #f1f0ff;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #ebc7e6;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.pagination-button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.5rem;
+  border: 2px solid #ebc7e6;
+  background: white;
+  color: #a084dc;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a084dc, #ebc7e6);
+  color: white;
+  border-color: #a084dc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(160, 132, 220, 0.3);
+}
+
+.pagination-button.active {
+  background: linear-gradient(135deg, #a084dc, #ebc7e6);
+  color: white;
+  border-color: #a084dc;
+  font-weight: 700;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f0ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-header-with-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pagination {
+    gap: 0.25rem;
+  }
+
+  .pagination-button {
+    min-width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .rows-per-page {
+    width: 100%;
+  }
+
+  .rows-select {
+    flex: 1;
+  }
+
+  .page-info {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pagination {
+    gap: 0.2rem;
+  }
+
+  .pagination-button {
+    min-width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}

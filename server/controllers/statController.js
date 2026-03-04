@@ -4,35 +4,36 @@ export const getDashboard = async (req, res) => {
   try {
     const { month, year, tutor_id } = req.query;
 
-    if (!month || !year || !tutor_id) {
-      return res.status(400).json({
-        error: "Month, year, and tutor_id are required",
-      });
+    if (!tutor_id) {
+      return res.status(400).json({ error: "tutor_id is required" });
     }
 
-    const monthNum = parseInt(month);
-    const yearNum = parseInt(year);
+    // console.log("Dashboard params:", { month, year, tutor_id });
+
+    // Convert "all" to null, otherwise parse to integer
+    const monthNum = month === "all" ? null : month ? parseInt(month) : null;
+    const yearNum = year === "all" ? null : year ? parseInt(year) : null;
 
     const [hoursRes, studentsRes, sessionsRes, incomeRes] = await Promise.all([
       supabase.rpc("get_total_hours_month_year", {
-        p_month: monthNum,
-        p_year: yearNum,
-        p_tutor_id: tutor_id,
+        p_tutor_id: tutor_id, // First parameter
+        p_month: monthNum, // Second parameter (can be null)
+        p_year: yearNum, // Third parameter (can be null)
       }),
       supabase.rpc("get_student_count", {
+        p_tutor_id: tutor_id,
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id,
       }),
       supabase.rpc("get_total_sessions", {
+        p_tutor_id: tutor_id,
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id,
       }),
       supabase.rpc("get_total_income", {
+        p_tutor_id: tutor_id,
         p_month: monthNum,
         p_year: yearNum,
-        p_tutor_id: tutor_id,
       }),
     ]);
 
@@ -55,5 +56,43 @@ export const getDashboard = async (req, res) => {
       error: err.message,
       details: "Failed to fetch dashboard statistics",
     });
+  }
+};
+export const getCourseSum = async (req, res) => {
+  try {
+    const { month, year, tutor_id } = req.query;
+
+    if (!tutor_id) {
+      return res.status(400).json({ error: "tutor_id is required" });
+    }
+
+    console.log("Received params:", { month, year, tutor_id });
+
+    // Convert "all" to null, otherwise parse to integer
+    const monthNum = month === "all" ? null : month ? parseInt(month) : null;
+    const yearNum = year === "all" ? null : year ? parseInt(year) : null;
+
+    console.log("Calling RPC with:", {
+      current_tutor_id: tutor_id,
+      p_month: monthNum,
+      p_year: yearNum,
+    });
+
+    const { data, error } = await supabase.rpc("get_course_monthly_summary", {
+      current_tutor_id: tutor_id, // First parameter
+      p_month: monthNum, // Second parameter (can be null)
+      p_year: yearNum, // Third parameter (can be null)
+    });
+
+    if (error) {
+      console.error("Supabase RPC error:", error);
+      throw error;
+    }
+
+    console.log("Data received:", data);
+    res.json(data || []);
+  } catch (err) {
+    console.error("Error in getCourseSum:", err.message);
+    res.status(500).json({ error: err.message });
   }
 };

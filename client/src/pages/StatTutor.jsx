@@ -52,7 +52,7 @@ export function StatTutor() {
             : (parseInt(selectedYear) - 543).toString();
 
         const res = await fetch(
-          `http://localhost:3000/api/dashboard?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
+          `http://localhost:3000/api/stat/dashboard?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
         );
 
         if (!res.ok) {
@@ -63,9 +63,8 @@ export function StatTutor() {
         const data = await res.json();
         setStatistics(data);
 
-        // Fetch course summary data
         const res2 = await fetch(
-          `http://localhost:3000/api/getCourseSummary?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
+          `http://localhost:3000/api/stat/getCourseSummary?month=${selectedMonth}&year=${yearParam}&tutor_id=${tutor_id}`,
         );
 
         if (!res2.ok) {
