@@ -6,6 +6,8 @@ import {
 
 const router = express.Router();
 
-router.get("/statistics/:tutorId", getIncomeFinance);
+// Change these to match frontend calls
+router.get("/income-finance/statistics/:tutorId", getIncomeFinance);
+router.get("/getDetailPayment/:current_tutor_id", getDetailPayment);
 
 export default router;
