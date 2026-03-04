@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
-// import logo from "../assets/logo.svg";
+import logo from "../assets/logo.svg";
 
 export function Register() {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/register", {
+      const res = await fetch("http://localhost:3000/api/begin/Register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export function Register() {
           <div className="form-section d-block">
             <img
               id="logo-login"
-              src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/logo.svg"
+              src="https://daozsddneakegwxtwfhb.supabase.co/storage/v1/object/public/images/server_images/login_image.png"
               alt="Logo"
             />
 
