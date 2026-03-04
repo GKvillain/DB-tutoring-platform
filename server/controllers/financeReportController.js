@@ -3,6 +3,7 @@ import supabase from "../config/supabaseClient.js";
 export const getIncomeFinance = async (req, res) => {
   try {
     const { tutorId } = req.params;
+    console.log("getIncomeFinance called with tutorId:", tutorId);
 
     const { data, error } = await supabase.rpc("get_income_statistics", {
       p_tutor_id: tutorId,
@@ -18,7 +19,12 @@ export const getIncomeFinance = async (req, res) => {
 
 export const getDetailPayment = async (req, res) => {
   try {
-    const { current_tutor_id, p_student_id, p_course_name } = req.params;
+    // Now this will work with URL parameter
+    const { current_tutor_id } = req.params;
+    // Also accept query params for optional filters
+    const { p_student_id, p_course_name } = req.query;
+
+    console.log("getDetailPayment called with tutor_id:", current_tutor_id);
 
     if (!current_tutor_id) {
       return res.status(400).json({ error: "current_tutor_id is required" });

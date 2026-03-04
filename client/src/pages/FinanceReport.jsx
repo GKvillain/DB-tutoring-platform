@@ -250,36 +250,38 @@ export function FinanceReport() {
         const tutorData = await accRes.json();
         const tutor_id = tutorData.tutor_id;
 
-        // Fetch statistics
+        console.log("Tutor ID:", tutor_id);
+
+        // FIXED: Use URL parameters (params) as your backend expects
+        // Statistics endpoint with URL parameter
         const statRes = await fetch(
-          `http://localhost:3000/api/income-finance/statistics/${tutor_id}`,
+          `http://localhost:3000/api/finance/income-finance/statistics/${tutor_id}`,
         );
 
-        // Fetch monthly payment details (sessions)
+        // Payment details endpoint with URL parameter
         const paymentRes = await fetch(
-          `http://localhost:3000/api/getDetailPayment/${tutor_id}`,
+          `http://localhost:3000/api/finance/getDetailPayment/${tutor_id}`,
         );
 
         if (!statRes.ok) {
           throw new Error("ไม่สามารถดึงข้อมูลรายได้ได้");
         }
 
-        if (!paymentRes.ok) {
-          console.warn("ไม่สามารถดึงข้อมูลรายการชำระเงินได้");
-        }
-
         const statData = await statRes.json();
+        console.log("Statistics data:", statData);
 
         // Only try to parse payment data if response is OK
         let sessionData = [];
         if (paymentRes.ok) {
           sessionData = await paymentRes.json();
-          console.log("Raw session data sample:", sessionData[0]);
+          console.log("Session data sample:", sessionData[0]);
+        } else {
+          console.warn("Payment response not OK:", paymentRes.status);
         }
 
         setSessions(sessionData);
-        console.log("Raw data from API:", statData);
 
+        // Format statistics based on your backend response structure
         const formattedStats = {
           today: 0,
           week: 0,
@@ -291,6 +293,7 @@ export function FinanceReport() {
 
         // Handle different response formats
         if (Array.isArray(statData)) {
+          // If it's an array from RPC function
           statData.forEach((item) => {
             switch (item.period) {
               case "today":
@@ -316,6 +319,7 @@ export function FinanceReport() {
             }
           });
         } else if (statData && typeof statData === "object") {
+          // If it's a single object
           formattedStats.today = statData.today || 0;
           formattedStats.week = statData.week || 0;
           formattedStats.month = statData.month || 0;
@@ -606,7 +610,7 @@ export function FinanceReport() {
           </div>
         ) : (
           <div className="no-data-message">
-            <p>ไม่มีข้อมูลการชำระเงินในเดือนนี้</p>
+            <p>ไม่มีข้อมูลการชำระเงิน</p>
           </div>
         )}
       </div>

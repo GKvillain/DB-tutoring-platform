@@ -67,14 +67,14 @@ export const updateLearningDetail = async (req, res) => {
       attendance_status,
     } = req.body;
 
-    console.log("=================================");
-    console.log("UPDATE REQUEST RECEIVED");
-    console.log("=================================");
-    console.log("record_id:", record_id);
-    console.log("attendance_id:", attendance_id);
-    console.log("lesson_topic:", lesson_topic);
-    console.log("homework_status:", homework_status);
-    console.log("attendance_status:", attendance_status);
+    // console.log("=================================");
+    // console.log("UPDATE REQUEST RECEIVED");
+    // console.log("=================================");
+    // console.log("record_id:", record_id);
+    // console.log("attendance_id:", attendance_id);
+    // console.log("lesson_topic:", lesson_topic);
+    // console.log("homework_status:", homework_status);
+    // console.log("attendance_status:", attendance_status);
 
     const results = [];
 
@@ -358,6 +358,101 @@ export const addLearningRecord = async (req, res) => {
     res.status(500).json({
       error: err.message,
       details: "Failed to add learning record",
+    });
+  }
+};
+
+export const getSummaryExam = async (req, res) => {
+  try {
+    // Accept both tutor_id and current_tutor_id
+    const tutor_id = req.query.tutor_id || req.query.current_tutor_id;
+
+    console.log("Received request with tutor id in summary exam: ", tutor_id);
+
+    if (!tutor_id) {
+      return res.status(400).json({
+        error: "tutor_id is required",
+        received: req.query,
+      });
+    }
+
+    const { data, error } = await supabase.rpc("get_summary_exam", {
+      current_tutor_id: tutor_id, // Pass the value to the RPC function
+    });
+
+    console.log("Supabase response:", { data, error });
+
+    if (error) throw error;
+
+    res.json(data || []);
+  } catch (err) {
+    console.error("Exam record error: ", err);
+    res.status(500).json({
+      error: err.message,
+      details: "Failed to fetch summary exam",
+    });
+  }
+};
+
+export const getExamDetail = async (req, res) => {
+  try {
+    const { student_id, tutor_id } = req.query;
+
+    console.log("Received request for exam detail:", { student_id, tutor_id });
+
+    if (!student_id) {
+      return res.status(400).json({ error: "student_id is required" });
+    }
+
+    let finalTutorId = tutor_id;
+
+    // If tutor_id not provided in query, try to get it from enrollment
+    if (!finalTutorId) {
+      console.log(
+        "No tutor_id provided, trying to get from enrollment for student:",
+        student_id,
+      );
+
+      const { data: enrollmentData, error: enrollmentError } = await supabase
+        .from("enrollment")
+        .select("tutor_id")
+        .eq("student_id", student_id)
+        .limit(1)
+        .maybeSingle();
+
+      if (enrollmentError) {
+        console.error("Error fetching enrollment:", enrollmentError);
+        return res
+          .status(400)
+          .json({ error: "Could not determine tutor from enrollment" });
+      }
+
+      if (!enrollmentData) {
+        return res
+          .status(404)
+          .json({ error: "No enrollment found for this student" });
+      }
+
+      finalTutorId = enrollmentData.tutor_id;
+      console.log("Found tutor_id from enrollment:", finalTutorId);
+    }
+
+    // Call the PostgreSQL function
+    const { data, error } = await supabase.rpc("get_exam_detail", {
+      current_tutor_id: finalTutorId,
+      student_id_param: student_id,
+    });
+
+    console.log("Supabase response:", { data, error });
+
+    if (error) throw error;
+
+    res.json(data || []);
+  } catch (err) {
+    console.error("Exam detail error: ", err);
+    res.status(500).json({
+      error: err.message,
+      details: "Failed to fetch exam details",
     });
   }
 };

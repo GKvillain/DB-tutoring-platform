@@ -16,6 +16,11 @@ export function PaymentTutor() {
   const [error, setError] = useState(null);
   const [detail, setDetail] = useState([]);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [expandedStudentPage, setExpandedStudentPage] = useState(1);
+  const rowsPerPage = 10;
+
   // Helper function to format date to Buddhist year in YYYY-MM-DD format
   const formatThaiDate = (dateString) => {
     if (!dateString) return "-";
@@ -34,8 +39,43 @@ export function PaymentTutor() {
     }
   };
 
+  // Helper function to get month order for sorting
+  const getMonthOrder = (monthName) => {
+    const monthOrderMap = {
+      มกราคม: 1,
+      กุมภาพันธ์: 2,
+      มีนาคม: 3,
+      เมษายน: 4,
+      พฤษภาคม: 5,
+      มิถุนายน: 6,
+      กรกฎาคม: 7,
+      สิงหาคม: 8,
+      กันยายน: 9,
+      ตุลาคม: 10,
+      พฤศจิกายน: 11,
+      ธันวาคม: 12,
+    };
+    return monthOrderMap[monthName] || 0;
+  };
+
+  // Helper function to extract year from month_name (e.g., "มีนาคม 2569" -> 2569)
+  const extractYearFromMonthName = (monthName) => {
+    if (!monthName) return 0;
+    const parts = monthName.split(" ");
+    return parts.length > 1 ? parseInt(parts[1]) : 0;
+  };
+
+  // Helper function to extract month name without year
+  const extractMonthNameOnly = (monthName) => {
+    if (!monthName) return "";
+    const parts = monthName.split(" ");
+    return parts[0];
+  };
+
   const toggleCard = (id) => {
     setExpandedId(expandedId === id ? null : id);
+    // Reset session page when opening a new student card
+    setExpandedStudentPage(1);
   };
 
   const handleCourseChange = (studentId, courseValue) => {
@@ -43,10 +83,42 @@ export function PaymentTutor() {
       ...prev,
       [studentId]: courseValue,
     }));
+    // Reset session page when changing course
+    setExpandedStudentPage(1);
+  };
 
-    if (expandedId === studentId) {
-      setExpandedId(null);
-    }
+  // Pagination handlers
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextSessionPage = () => {
+    setExpandedStudentPage((prev) =>
+      Math.min(prev + 1, getCurrentSessionPages()),
+    );
+  };
+
+  const handlePrevSessionPage = () => {
+    setExpandedStudentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  // Function to get current session pages based on expanded student
+  const getCurrentSessionPages = () => {
+    if (!expandedId) return 1;
+    const student = studentsWithCourses.find(
+      (s) => s.student_id === expandedId,
+    );
+    if (!student) return 1;
+
+    const selectedCourse = selectedCourseByStudent[expandedId];
+    const filteredGroupedDetails =
+      getFilteredGroupedDetailsForStudent(expandedId);
+    const sessions = filteredGroupedDetails[selectedCourse] || [];
+    return Math.ceil(sessions.length / rowsPerPage);
   };
 
   useEffect(() => {
@@ -69,13 +141,13 @@ export function PaymentTutor() {
         const tutor_id = tutorData.tutor_id || tutorData;
 
         const hoursRes = await fetch(
-          `http://localhost:3000/api/getHoursPending?current_tutor_id=${tutor_id}`,
+          `http://localhost:3000/api/payment/getHoursPending?current_tutor_id=${tutor_id}`,
         );
 
         const hoursData = await hoursRes.json();
 
         const detailRes = await fetch(
-          `http://localhost:3000/api/getDetailPayment/${tutor_id}?p_student_id=&p_course_name=`,
+          `http://localhost:3000/api/payment/getDetailPayment/${tutor_id}?p_student_id=&p_course_name=`,
         );
 
         const detailData = await detailRes.json();
@@ -85,11 +157,33 @@ export function PaymentTutor() {
         }
 
         setPendingData(Array.isArray(hoursData) ? hoursData : []);
-        setDetail(Array.isArray(detailData) ? detailData : []);
+
+        // Sort detail data by year and month (descending - newest first)
+        if (Array.isArray(detailData)) {
+          const sortedDetail = [...detailData].sort((a, b) => {
+            // Extract years from month_name
+            const yearA = extractYearFromMonthName(a.month_name);
+            const yearB = extractYearFromMonthName(b.month_name);
+
+            // First sort by year (descending - newer first)
+            if (yearA !== yearB) {
+              return yearB - yearA; // Descending order
+            }
+
+            // Then sort by month within the same year (descending)
+            const monthNameA = extractMonthNameOnly(a.month_name);
+            const monthNameB = extractMonthNameOnly(b.month_name);
+            return getMonthOrder(monthNameB) - getMonthOrder(monthNameA); // Descending order
+          });
+          setDetail(sortedDetail);
+        } else {
+          setDetail([]);
+        }
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message);
         setPendingData([]);
+        setDetail([]);
       } finally {
         setLoading(false);
       }
@@ -100,6 +194,7 @@ export function PaymentTutor() {
 
   const studentsWithCourses = useMemo(() => {
     const studentMap = new Map();
+    const initialSelections = {};
 
     pendingData.forEach((record) => {
       if (!studentMap.has(record.student_id)) {
@@ -109,6 +204,9 @@ export function PaymentTutor() {
           student_picture: record.student_picture,
           courses: [],
         });
+
+        // Initialize with first course as default selection
+        initialSelections[record.student_id] = record.course_name_thai;
       }
 
       studentMap.get(record.student_id).courses.push({
@@ -120,10 +218,7 @@ export function PaymentTutor() {
       });
     });
 
-    const initialSelections = {};
-    Array.from(studentMap.keys()).forEach((studentId) => {
-      initialSelections[studentId] = "";
-    });
+    // Set initial selections
     setSelectedCourseByStudent(initialSelections);
 
     return Array.from(studentMap.values());
@@ -144,13 +239,34 @@ export function PaymentTutor() {
       grouped[session.student_id][session.course_name_thai].push(session);
     });
 
+    // Sort sessions within each course by year and month (descending - newest first)
+    Object.keys(grouped).forEach((studentId) => {
+      Object.keys(grouped[studentId]).forEach((courseName) => {
+        grouped[studentId][courseName].sort((a, b) => {
+          // Extract years from month_name
+          const yearA = extractYearFromMonthName(a.month_name);
+          const yearB = extractYearFromMonthName(b.month_name);
+
+          // Sort by year first (descending - newer first)
+          if (yearA !== yearB) {
+            return yearB - yearA; // Descending order
+          }
+
+          // Then sort by month within the same year (descending)
+          const monthNameA = extractMonthNameOnly(a.month_name);
+          const monthNameB = extractMonthNameOnly(b.month_name);
+          return getMonthOrder(monthNameB) - getMonthOrder(monthNameA); // Descending order
+        });
+      });
+    });
+
     return grouped;
   }, [detail]);
 
   const getFilteredCoursesForStudent = (student) => {
     const selectedCourse = selectedCourseByStudent[student.student_id];
 
-    if (!selectedCourse) return student.courses;
+    if (!selectedCourse) return [];
 
     return student.courses.filter((c) => c.course_name_thai === selectedCourse);
   };
@@ -165,11 +281,15 @@ export function PaymentTutor() {
       };
     }
 
-    return studentGrouped;
+    return {};
   };
 
   const calculateStudentTotals = (student) => {
     const filteredCourses = getFilteredCoursesForStudent(student);
+
+    if (filteredCourses.length === 0) {
+      return { total_pending_hours: 0, total_outstanding: 0, course_price: 0 };
+    }
 
     const totals = filteredCourses.reduce(
       (acc, course) => ({
@@ -181,18 +301,19 @@ export function PaymentTutor() {
       { total_pending_hours: 0, total_outstanding: 0 },
     );
 
-    const coursePrice =
-      filteredCourses.length === 1
-        ? filteredCourses[0].course_price
-        : filteredCourses.length > 1
-          ? "หลายรายการ"
-          : 0;
+    const coursePrice = filteredCourses[0].course_price;
 
     return {
       ...totals,
       course_price: coursePrice,
     };
   };
+
+  // Pagination calculations for students
+  const totalPages = Math.ceil(studentsWithCourses.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedStudents = studentsWithCourses.slice(startIndex, endIndex);
 
   return (
     <>
@@ -210,29 +331,39 @@ export function PaymentTutor() {
         {error && <p style={{ color: "red" }}>Error: {error}</p>}
 
         <div className="payment-header">
-          <div className="header-image-space"></div>
-          <div className="header-name-space"></div>
-          <div className="header-details">
-            <span>คาบเรียนที่ยังไม่ชำระ (ชั่วโมง)</span>
-            <span>ราคาต่อชั่วโมง (บาท)</span>
-            <span>ยอดชำระทั้งหมด (บาท)</span>
-            <span>สถานะการชำระเงิน</span>
+          <div className="header-content">
+            <div className="header-image-placeholder"></div>
+            <div className="header-name-placeholder"></div>
+            <div className="header-details-fixed">
+              <span>คาบเรียนที่ยังไม่ชำระ (ชั่วโมง)</span>
+              <span>ราคาต่อชั่วโมง (บาท)</span>
+              <span>ยอดชำระทั้งหมด (บาท)</span>
+              <span>สถานะการชำระเงิน</span>
+            </div>
           </div>
         </div>
 
         {studentsWithCourses.length > 0
-          ? studentsWithCourses.map((student) => {
+          ? paginatedStudents.map((student) => {
               const totals = calculateStudentTotals(student);
-              const groupedDetails = getFilteredGroupedDetailsForStudent(
-                student.student_id,
-              );
+              const filteredGroupedDetails =
+                getFilteredGroupedDetailsForStudent(student.student_id);
               const hasOutstanding = totals.total_outstanding > 0;
 
-              const uniqueCourses = [
-                ...new Map(
-                  student.courses.map((c) => [c.course_name_thai, c]),
-                ).values(),
-              ];
+              // Get sessions for the selected course
+              const selectedCourseSessions =
+                filteredGroupedDetails[
+                  selectedCourseByStudent[student.student_id]
+                ] || [];
+              const totalSessionPages = Math.ceil(
+                selectedCourseSessions.length / rowsPerPage,
+              );
+              const sessionStartIndex = (expandedStudentPage - 1) * rowsPerPage;
+              const sessionEndIndex = sessionStartIndex + rowsPerPage;
+              const paginatedSessions = selectedCourseSessions.slice(
+                sessionStartIndex,
+                sessionEndIndex,
+              );
 
               return (
                 <div
@@ -242,7 +373,7 @@ export function PaymentTutor() {
                   }`}
                   onClick={() => toggleCard(student.student_id)}
                 >
-                  <div className="student-card-content">
+                  <div className="student-card-content-fixed">
                     <img
                       src={student.student_picture || nonggk}
                       alt={student.student_name}
@@ -250,10 +381,11 @@ export function PaymentTutor() {
                     />
 
                     <div className="student-name-container">
-                      <p className="student-name">{student.student_name}</p>
-
+                      <span className="student-name-fixed">
+                        {student.student_name}
+                      </span>
                       <select
-                        className="selectCourse"
+                        className="course-select"
                         value={
                           selectedCourseByStudent[student.student_id] || ""
                         }
@@ -266,24 +398,25 @@ export function PaymentTutor() {
                         }}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <option value="">ทั้งหมด</option>
-                        {uniqueCourses.map((c, index) => (
-                          <option
-                            key={index}
-                            value={c.course_name_thai}
-                            className="selectCourse"
-                          >
-                            {c.course_name_thai}
+                        {student.courses.map((course, index) => (
+                          <option key={index} value={course.course_name_thai}>
+                            {course.course_name_thai}
                           </option>
                         ))}
                       </select>
                     </div>
 
-                    <div className="student-details">
-                      <span>{totals.total_pending_hours}</span>
-                      <span>{totals.course_price}</span>
-                      <span>{totals.total_outstanding}</span>
-                      <span>
+                    <div className="student-details-fixed">
+                      <span data-label="คาบเรียนที่ยังไม่ชำระ">
+                        {totals.total_pending_hours}
+                      </span>
+                      <span data-label="ราคาต่อชั่วโมง">
+                        {totals.course_price}
+                      </span>
+                      <span data-label="ยอดชำระทั้งหมด">
+                        {totals.total_outstanding}
+                      </span>
+                      <span data-label="สถานะ">
                         {hasOutstanding ? "มียอดค้างชำระ" : "ไม่มียอดค้างชำระ"}
                       </span>
                     </div>
@@ -291,81 +424,124 @@ export function PaymentTutor() {
 
                   {expandedId === student.student_id && (
                     <div className="expanded-detail">
-                      <p>รายละเอียดคาบเรียน</p>
+                      <p>รายละเอียดคาบเรียน (เรียงจากล่าสุดไปล่าสุด)</p>
 
-                      {Object.keys(groupedDetails).length > 0 ? (
-                        Object.entries(groupedDetails).map(
-                          ([courseName, sessions], courseIndex) => (
-                            <div key={courseIndex} className="course-section">
-                              <h3 className="course-title">{courseName}</h3>
+                      {Object.keys(filteredGroupedDetails).length > 0 ? (
+                        Object.entries(filteredGroupedDetails).map(
+                          ([courseName, sessions], courseIndex) => {
+                            // Only show the selected course
+                            if (
+                              courseName !==
+                              selectedCourseByStudent[student.student_id]
+                            )
+                              return null;
 
-                              <div className="topic-inner-detail">
-                                <h4>ครั้งที่</h4>
-                                <h4>เดือน</h4>
-                                <h4>คาบเรียน (ชม.)</h4>
-                                <h4>ราคาต่อชั่วโมง</h4>
-                                <h4>ยอดชำระ</h4>
-                                <h4>วันที่คำนวณยอดชำระ</h4>
-                                <h4>วันที่ชำระเงิน</h4>
-                                <h4>สถานะ</h4>
-                              </div>
+                            return (
+                              <div key={courseIndex} className="course-section">
+                                <h3 className="course-title">{courseName}</h3>
 
-                              {sessions.map((session, index) => (
-                                <div
-                                  key={index}
-                                  className="topic-inner-detail session-row"
-                                >
-                                  <p>{index + 1}</p>
-                                  <p>{session.month_name}</p>
-                                  <p>{session.total_hours}</p>
-                                  <p>{session.price_per_hour}</p>
-                                  <p>{session.total_amount}</p>
-                                  <p>{formatThaiDate(session.payment_date)}</p>
-                                  <p>{formatThaiDate(session.paid_date)}</p>
-                                  <p>
-                                    <span
-                                      className={`status-badge ${session.payment_status === "PAID" ? "paid" : "pending"}`}
+                                <div className="topic-inner-detail">
+                                  <h4>ครั้งที่</h4>
+                                  <h4>เดือน</h4>
+                                  <h4>คาบเรียน (ชม.)</h4>
+                                  <h4>ราคาต่อชั่วโมง</h4>
+                                  <h4>ยอดชำระ</h4>
+                                  <h4>วันที่คำนวณยอดชำระ</h4>
+                                  <h4>วันที่ชำระเงิน</h4>
+                                  <h4>สถานะ</h4>
+                                </div>
+
+                                {paginatedSessions.map((session, index) => {
+                                  const actualIndex =
+                                    sessionStartIndex + index + 1;
+                                  return (
+                                    <div
+                                      key={index}
+                                      className="topic-inner-detail session-row"
                                     >
-                                      {session.payment_status === "PAID"
-                                        ? "ชำระแล้ว"
-                                        : "รอชำระ"}
+                                      <p>{actualIndex}</p>
+                                      <p>{session.month_name}</p>
+                                      <p>{session.total_hours}</p>
+                                      <p>{session.price_per_hour}</p>
+                                      <p>{session.total_amount}</p>
+                                      <p>
+                                        {formatThaiDate(session.payment_date)}
+                                      </p>
+                                      <p>{formatThaiDate(session.paid_date)}</p>
+                                      <p>
+                                        <span
+                                          className={`status-badge ${session.payment_status === "PAID" ? "paid" : "pending"}`}
+                                        >
+                                          {session.payment_status === "PAID"
+                                            ? "ชำระแล้ว"
+                                            : "รอชำระ"}
+                                        </span>
+                                      </p>
+                                    </div>
+                                  );
+                                })}
+
+                                {/* Session Pagination Controls */}
+                                {totalSessionPages > 1 && (
+                                  <div className="pagination-controls">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handlePrevSessionPage();
+                                      }}
+                                      disabled={expandedStudentPage === 1}
+                                      className="pagination-button"
+                                    >
+                                      ←
+                                    </button>
+                                    <span className="pagination-info">
+                                      {expandedStudentPage} /{" "}
+                                      {totalSessionPages}
                                     </span>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleNextSessionPage();
+                                      }}
+                                      disabled={
+                                        expandedStudentPage ===
+                                        totalSessionPages
+                                      }
+                                      className="pagination-button"
+                                    >
+                                      →
+                                    </button>
+                                  </div>
+                                )}
+
+                                <div className="course-summary">
+                                  <p>รวมทั้งสิ้น: {sessions.length} ครั้ง</p>
+                                  <p>
+                                    รวมชั่วโมง:{" "}
+                                    {sessions
+                                      .reduce(
+                                        (sum, s) =>
+                                          sum + parseFloat(s.total_hours || 0),
+                                        0,
+                                      )
+                                      .toFixed(2)}{" "}
+                                    ชม.
+                                  </p>
+                                  <p>
+                                    รวมยอด:{" "}
+                                    {sessions
+                                      .reduce(
+                                        (sum, s) =>
+                                          sum + parseFloat(s.total_amount || 0),
+                                        0,
+                                      )
+                                      .toFixed(2)}{" "}
+                                    บาท
                                   </p>
                                 </div>
-                              ))}
-
-                              <div className="course-summary">
-                                <p>รวมทั้งสิ้น: {sessions.length} ครั้ง</p>
-                                <p>
-                                  รวมชั่วโมง:{" "}
-                                  {sessions
-                                    .reduce(
-                                      (sum, s) =>
-                                        sum + parseFloat(s.total_hours || 0),
-                                      0,
-                                    )
-                                    .toFixed(2)}{" "}
-                                  ชม.
-                                </p>
-                                <p>
-                                  รวมยอด:{" "}
-                                  {sessions
-                                    .reduce(
-                                      (sum, s) =>
-                                        sum + parseFloat(s.total_amount || 0),
-                                      0,
-                                    )
-                                    .toFixed(2)}{" "}
-                                  บาท
-                                </p>
                               </div>
-
-                              {courseIndex <
-                                Object.keys(groupedDetails).length - 1 && (
-                                <hr className="course-divider" />
-                              )}
-                            </div>
-                          ),
+                            );
+                          },
                         )
                       ) : (
                         <p className="no-details">ไม่มีรายละเอียดคาบเรียน</p>
@@ -380,6 +556,30 @@ export function PaymentTutor() {
                 <p className="no-data">ไม่มีข้อมูลการชำระเงิน</p>
               </div>
             )}
+
+        {/* Student Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="pagination-controls main-pagination">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
+              ←
+            </button>
+            <span className="pagination-info">
+              หน้า {currentPage} / {totalPages} (ทั้งหมด{" "}
+              {studentsWithCourses.length} รายการ)
+            </span>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

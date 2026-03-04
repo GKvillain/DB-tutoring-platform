@@ -60,13 +60,13 @@ export const getDashboard = async (req, res) => {
 };
 export const getCourseSum = async (req, res) => {
   try {
-    const { month, year, tutor_id } = req.query;
+    const { month, year, tutor_id, course_name } = req.query; // Add course_name
 
     if (!tutor_id) {
       return res.status(400).json({ error: "tutor_id is required" });
     }
 
-    console.log("Received params:", { month, year, tutor_id });
+    console.log("Received params:", { month, year, tutor_id, course_name });
 
     // Convert "all" to null, otherwise parse to integer
     const monthNum = month === "all" ? null : month ? parseInt(month) : null;
@@ -76,12 +76,14 @@ export const getCourseSum = async (req, res) => {
       current_tutor_id: tutor_id,
       p_month: monthNum,
       p_year: yearNum,
+      p_course_name: course_name || null, // Pass course_name
     });
 
     const { data, error } = await supabase.rpc("get_course_monthly_summary", {
-      current_tutor_id: tutor_id, // First parameter
-      p_month: monthNum, // Second parameter (can be null)
-      p_year: yearNum, // Third parameter (can be null)
+      current_tutor_id: tutor_id,
+      p_month: monthNum,
+      p_year: yearNum,
+      p_course_name: course_name || null, // Add this parameter
     });
 
     if (error) {
@@ -90,7 +92,17 @@ export const getCourseSum = async (req, res) => {
     }
 
     console.log("Data received:", data);
-    res.json(data || []);
+
+    // If requesting a specific course, you might want to return just that one
+    if (course_name && data && data.length > 0) {
+      // Find the specific course in the results
+      const specificCourse = data.find(
+        (item) => item.course_name === course_name,
+      );
+      res.json(specificCourse ? [specificCourse] : []);
+    } else {
+      res.json(data || []);
+    }
   } catch (err) {
     console.error("Error in getCourseSum:", err.message);
     res.status(500).json({ error: err.message });
